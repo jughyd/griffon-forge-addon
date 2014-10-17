@@ -31,11 +31,6 @@
       <scope>runtime</scope>
       <optional>true</optional>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.griffon.forge</groupId>
-      <artifactId>griffon-forge-addon-spi</artifactId>
-      <classifier>forge-addon</classifier>
-    </dependency>
   </dependencies>
   <build>
     <plugins>

@@ -10,7 +10,6 @@
     <module>addon</module>
     <module>api</module>
     <module>impl</module>
-    <module>spi</module>
     <module>tests</module>
   </modules>
   <properties>
@@ -73,12 +72,6 @@
         <groupId>org.codehaus.griffon.forge</groupId>
         <artifactId>griffon-forge-addon-impl</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.griffon.forge</groupId>
-        <artifactId>griffon-forge-addon-spi</artifactId>
-        <version>${project.version}</version>
-        <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss.forge.addon</groupId>

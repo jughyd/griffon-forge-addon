@@ -25,11 +25,5 @@
       <artifactId>cdi</artifactId>
       <classifier>forge-addon</classifier>
     </dependency>
-    <dependency>
-      <groupId>org.codehaus.griffon.forge</groupId>
-      <artifactId>griffon-forge-addon-spi</artifactId>
-      <classifier>forge-addon</classifier>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 </project>
