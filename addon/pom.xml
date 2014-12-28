@@ -35,23 +35,6 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.jboss.forge.furnace</groupId>
-        <artifactId>furnace-maven-plugin</artifactId>
-        <version>${version.furnace}</version>
-        <executions>
-          <execution>
-            <id>generate-dot</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>generate-dot</goal>
-            </goals>
-            <configuration>
-              <attach>true</attach>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
@@ -68,4 +51,31 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>release</id>
+      <activation />
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-maven-plugin</artifactId>
+            <version>${version.furnace}</version>
+            <executions>
+              <execution>
+                <id>generate-dot</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>generate-dot</goal>
+                </goals>
+                <configuration>
+                  <attach>true</attach>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
