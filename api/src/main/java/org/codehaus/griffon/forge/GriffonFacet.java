@@ -8,13 +8,9 @@ import org.jboss.forge.furnace.versions.Version;
 public interface GriffonFacet extends ProjectFacet {
 
 
-	Version getVersion();
+    Version getVersion();
 
-	FrameworkTypes getFramework() ;
+    void setFramework(FrameworkTypes framework);
 
-	void setFramework(FrameworkTypes framework);
-
-	LanguageTypes getLanguage();
-
-	void setLanguage(LanguageTypes language);
+    void setLanguage(LanguageTypes language);
 }
