@@ -1,11 +1,18 @@
 package org.codehaus.griffon.forge.ui.setup;
 
+import org.codehaus.griffon.forge.AbstractGriffonFacet;
 import org.codehaus.griffon.forge.CommandRunner;
 import org.codehaus.griffon.forge.GriffonFacet;
 import org.codehaus.griffon.forge.ui.AbstractGriffonCommand;
 import org.codehaus.griffon.types.FrameworkTypes;
 import org.codehaus.griffon.types.LanguageTypes;
+import org.jboss.forge.addon.dependencies.DependencyQuery;
+import org.jboss.forge.addon.dependencies.DependencyResolver;
+import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
+import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
+import org.jboss.forge.addon.dependencies.util.NonSnapshotDependencyFilter;
 import org.jboss.forge.addon.facets.FacetFactory;
+import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -42,40 +49,53 @@ public class SetupCommand extends AbstractGriffonCommand {
 	private UISelectOne<LanguageTypes> languageType;
 
 	@Inject
-	@WithAttributes(label = "Maven Group", defaultValue = "org.example", shortName = 'g')
-	private UIInput<String> group;
-
-	@Inject
-	@WithAttributes(label = "Maven Version", defaultValue = "0.1.0-SNAPSHOT", shortName = 'm')
-	private UIInput<String> mavenVersion;
-
-	@Inject
-	@WithAttributes(label = "Maven Version", defaultValue = "org.example", shortName = 'p')
-	private UIInput<String> basePackage;
-
-	@Inject
 	private FacetFactory facetFactory;
+
+	@Inject
+	private DependencyBuilder dependencyBuilder;
+
+	@Inject
+	private DependencyInstaller dependencyInstaller;
+
+	@Inject
+	private  DependencyResolver dependencyResolver;
 
 	@Override
 	public Result execute(UIExecutionContext context) throws Exception {
-//		Project selectedProject = getSelectedProject(context);
-//		DirectoryResource directoryResource = (DirectoryResource)selectedProject.getRoot();
-//		directoryResource.getOrCreateChildDirectory("config");
-		List<String> cmdArguments = new ArrayList<>();
-		cmdArguments.add("create");
-		cmdArguments.add("griffon-javafx-java");
-		cmdArguments.add("1.1.0");
-		cmdArguments.add(getSelectedProject(context).getRoot().getName());
-		CommandRunner cmd = new CommandRunner("lazybones",false, cmdArguments);
-		cmd.setDirectory(getSelectedProject(context).getRoot().getParent().getFullyQualifiedName());
-		List<String> subsequentInputs = new ArrayList<>();
-		subsequentInputs.add("org.buddha");
-		subsequentInputs.add(getSelectedProject(context).getRoot().getName());
-		subsequentInputs.add("");
-		subsequentInputs.add("");
-		subsequentInputs.add("");
-		subsequentInputs.add("");
-		cmd.run(subsequentInputs);
+
+		GriffonFacet griffonFacet = griffonVersion.getValue();
+
+		griffonFacet.setFramework(frameworkType.getValue());
+		griffonFacet.setLanguage(languageType.getValue());
+
+		if (facetFactory.install(getSelectedProject(context.getUIContext()),griffonFacet)) {
+			return Results.success("Griffon has been installed.");
+		}
+		DependencyQuery query = DependencyQueryBuilder
+				.create("junit:junit")
+				.setFilter(new NonSnapshotDependencyFilter());
+
+//		dependencyResolver.resolveVersions(query).get(0);
+
+		DependencyBuilder builder = DependencyBuilder.create();
+		builder.setCoordinate(dependencyResolver.resolveVersions(query).get(0));
+
+		dependencyInstaller.install(getSelectedProject(context.getUIContext()), builder);
+//		List<String> cmdArguments = new ArrayList<>();
+//		cmdArguments.add("create");
+//		cmdArguments.add("griffon-javafx-java");
+//		cmdArguments.add("1.1.0");
+//		cmdArguments.add(getSelectedProject(context).getRoot().getName());
+//		CommandRunner cmd = new CommandRunner("lazybones",false, cmdArguments);
+//		cmd.setDirectory(getSelectedProject(context).getRoot().getParent().getFullyQualifiedName());
+//		List<String> subsequentInputs = new ArrayList<>();
+//		subsequentInputs.add("org.buddha");
+//		subsequentInputs.add(getSelectedProject(context).getRoot().getName());
+//		subsequentInputs.add("");
+//		subsequentInputs.add("");
+//		subsequentInputs.add("");
+//		subsequentInputs.add("");
+//		cmd.run(subsequentInputs);
 		return Results.success("Your project is modified as a Griffon Project");
 	}
 
@@ -83,10 +103,7 @@ public class SetupCommand extends AbstractGriffonCommand {
 	public void initializeUI(UIBuilder builder) throws Exception {
 		builder.add(griffonVersion)
 			   .add(frameworkType)
-				.add(languageType)
-				.add(group)
-				.add(mavenVersion)
-				.add(basePackage);
+				.add(languageType);
 	}
 
 	@Override
