@@ -1,12 +1,11 @@
 package org.codehaus.griffon.forge.ui.setup;
 
+import org.codehaus.griffon.forge.CommandRunner;
 import org.codehaus.griffon.forge.GriffonFacet;
 import org.codehaus.griffon.forge.ui.AbstractGriffonCommand;
 import org.codehaus.griffon.types.FrameworkTypes;
 import org.codehaus.griffon.types.LanguageTypes;
 import org.jboss.forge.addon.facets.FacetFactory;
-import org.jboss.forge.addon.projects.Project;
-import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.ui.context.UIBuilder;
 import org.jboss.forge.addon.ui.context.UIContext;
 import org.jboss.forge.addon.ui.context.UIExecutionContext;
@@ -21,6 +20,8 @@ import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class SetupCommand extends AbstractGriffonCommand {
@@ -57,10 +58,24 @@ public class SetupCommand extends AbstractGriffonCommand {
 
 	@Override
 	public Result execute(UIExecutionContext context) throws Exception {
-		Project selectedProject = getSelectedProject(context);
-		DirectoryResource directoryResource = (DirectoryResource)selectedProject.getRoot();
-		directoryResource.getOrCreateChildDirectory("config");
-
+//		Project selectedProject = getSelectedProject(context);
+//		DirectoryResource directoryResource = (DirectoryResource)selectedProject.getRoot();
+//		directoryResource.getOrCreateChildDirectory("config");
+		List<String> cmdArguments = new ArrayList<>();
+		cmdArguments.add("create");
+		cmdArguments.add("griffon-javafx-java");
+		cmdArguments.add("1.1.0");
+		cmdArguments.add(getSelectedProject(context).getRoot().getName());
+		CommandRunner cmd = new CommandRunner("lazybones",false, cmdArguments);
+		cmd.setDirectory(getSelectedProject(context).getRoot().getParent().getFullyQualifiedName());
+		List<String> subsequentInputs = new ArrayList<>();
+		subsequentInputs.add("org.buddha");
+		subsequentInputs.add(getSelectedProject(context).getRoot().getName());
+		subsequentInputs.add("");
+		subsequentInputs.add("");
+		subsequentInputs.add("");
+		subsequentInputs.add("");
+		cmd.run(subsequentInputs);
 		return Results.success("Your project is modified as a Griffon Project");
 	}
 
