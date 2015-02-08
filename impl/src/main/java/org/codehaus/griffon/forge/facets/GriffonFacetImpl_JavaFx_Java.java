@@ -1,5 +1,7 @@
 package org.codehaus.griffon.forge.facets;
 
+import org.codehaus.griffon.types.FrameworkTypes;
+import org.codehaus.griffon.types.LanguageTypes;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
@@ -9,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Configures the project to use Griffon, JavaFx frameworks and Java Language
  * Created by buddha on 2/8/15.
  */
 public class GriffonFacetImpl_JavaFx_Java extends AbstractGriffonFacet {
@@ -17,7 +20,8 @@ public class GriffonFacetImpl_JavaFx_Java extends AbstractGriffonFacet {
 
     @Inject
     public GriffonFacetImpl_JavaFx_Java(DependencyInstaller installer) {
-        super(installer);
+        super(installer,FrameworkTypes.JavaFx,LanguageTypes.Java);
+
         if(log.isLoggable(Level.FINE))
             log.fine("GriffonFacetImpl_JavaFx_Java is instantiated");
     }
@@ -41,8 +45,4 @@ public class GriffonFacetImpl_JavaFx_Java extends AbstractGriffonFacet {
         addDependency(GRIFFON_JAVAFX);
     }
 
-    @Override
-    public Version getVersion() {
-        return new SingleVersion("JAVAFX-JAVA");
-    }
 }

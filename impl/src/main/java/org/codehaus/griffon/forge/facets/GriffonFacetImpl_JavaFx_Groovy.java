@@ -1,5 +1,7 @@
 package org.codehaus.griffon.forge.facets;
 
+import org.codehaus.griffon.types.FrameworkTypes;
+import org.codehaus.griffon.types.LanguageTypes;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
@@ -9,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Configures the project to use Griffon, JavaFx frameworks and Groovy Language
  * Created by buddha on 2/8/15.
  */
 public class GriffonFacetImpl_JavaFx_Groovy extends AbstractGriffonFacet {
@@ -17,13 +20,15 @@ public class GriffonFacetImpl_JavaFx_Groovy extends AbstractGriffonFacet {
 
     @Inject
     public GriffonFacetImpl_JavaFx_Groovy(DependencyInstaller installer) {
-        super(installer);
+        super(installer,FrameworkTypes.JavaFx,LanguageTypes.Groovy);
+
         if(log.isLoggable(Level.FINE))
             log.fine("GriffonFacetImpl_JavaFx_Groovy is instantiated");
     }
 
     @Override
-    public Version getVersion() {
-        return new SingleVersion("JAVAFX-GROOVY");
+    public boolean install() {
+        throw new RuntimeException("Facet not yet implemented");
     }
+
 }

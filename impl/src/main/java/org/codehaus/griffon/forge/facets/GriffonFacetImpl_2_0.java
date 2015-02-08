@@ -19,12 +19,7 @@ public class GriffonFacetImpl_2_0 extends AbstractGriffonFacet {
 		super(installer);
 		if(log.isLoggable(Level.FINE))
 			log.fine("GriffonFacetImpl_2_0 is instantiated");
-	}
 
-	@Override
-	public Version getVersion() {
-		return new SingleVersion("2.0");
 	}
-
 
 }
