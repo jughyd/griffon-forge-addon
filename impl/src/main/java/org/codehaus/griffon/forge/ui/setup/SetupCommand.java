@@ -1,10 +1,9 @@
 package org.codehaus.griffon.forge.ui.setup;
 
-import java.util.logging.Logger;
-
-import javax.inject.Inject;
-
 import org.codehaus.griffon.forge.GriffonFacet;
+import org.codehaus.griffon.forge.facets.GriffonFacetImpl_2_0;
+import org.codehaus.griffon.forge.facets.GriffonFacetImpl_JavaFx_Groovy;
+import org.codehaus.griffon.forge.facets.GriffonFacetImpl_JavaFx_Java;
 import org.codehaus.griffon.forge.ui.AbstractGriffonCommand;
 import org.codehaus.griffon.types.FrameworkTypes;
 import org.codehaus.griffon.types.LanguageTypes;
@@ -21,61 +20,87 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 
+import javax.inject.Inject;
+import java.util.logging.Logger;
+
 public class SetupCommand extends AbstractGriffonCommand {
 
-	private static final Logger log = Logger.getLogger(SetupCommand.class
-			.getName());
+    private static final Logger log = Logger
+            .getLogger(SetupCommand.class.getName());
 
-	@Inject
-	@WithAttributes(required = true, label = "Griffon Version", defaultValue = "2.0", shortName = 'v')
-	private UISelectOne<GriffonFacet> griffonVersion;
+    @Inject
+    @WithAttributes(required = true, label = "Griffon Version", defaultValue = "JAVAFX-JAVA", shortName = 'v')
+    private UISelectOne<GriffonFacet> griffonVersion;
 
-	@Inject
-	@WithAttributes(label = "Framework", type = InputType.DROPDOWN, shortName = 'f', defaultValue = "JavaFx")
-	private UISelectOne<FrameworkTypes> frameworkType;
+    @Inject
+    GriffonFacetImpl_2_0 griffonFacetImpl_2_0;
 
-	@Inject
-	@WithAttributes(label = "Language", type = InputType.DROPDOWN, shortName = 'l', defaultValue = "Java")
-	private UISelectOne<LanguageTypes> languageType;
+    @Inject
+    GriffonFacetImpl_JavaFx_Java griffonFacetImpl_javaFx_java;
 
-	@Inject
-	private FacetFactory facetFactory;
+    @Inject
+    GriffonFacetImpl_JavaFx_Groovy griffonFacetImpl_javaFx_groovy;
 
-	@Override
-	public Result execute(UIExecutionContext context) throws Exception {
+    @Inject
+    @WithAttributes(label = "Framework", type = InputType.DROPDOWN, shortName = 'f')
+    private UISelectOne<FrameworkTypes> frameworkType;
 
-		GriffonFacet griffonFacet = griffonVersion.getValue();
+    @Inject
+    @WithAttributes(label = "Language", type = InputType.DROPDOWN, shortName = 'l')
+    private UISelectOne<LanguageTypes> languageType;
 
-		griffonFacet.setFramework(frameworkType.getValue());
-		griffonFacet.setLanguage(languageType.getValue());
+    @Inject
+    private FacetFactory facetFactory;
 
-		if (facetFactory.install(getSelectedProject(context.getUIContext()),
-				griffonFacet)) {
-			return Results.success("Griffon has been installed.");
-		}
+    @Override
+    public Result execute(UIExecutionContext context) throws Exception {
 
-		return Results.success("Your project is modified as a Griffon Project");
-	}
+        GriffonFacet griffonFacet;
 
-	@Override
-	public void initializeUI(UIBuilder builder) throws Exception {
-		builder.add(griffonVersion).add(frameworkType).add(languageType);
-	}
+//        griffonFacet.setFramework(frameworkType.getValue());
+//        griffonFacet.setLanguage(languageType.getValue());
 
-	@Override
-	protected boolean isProjectRequired() {
-		return true;
-	}
+        switch (frameworkType.getValue().toString() + "-" +languageType.getValue().toString())
+        {
+            case "JavaFx-Java":
+                griffonFacet = griffonFacetImpl_javaFx_java;
+                break;
 
-	@Override
-	public UICommandMetadata getMetadata(UIContext context) {
-		return Metadata
-				.from(super.getMetadata(context), getClass())
-				.name("Griffon: Setup Project")
-				.description("Setup a Griffon project")
-				.category(
-						Categories.create(super.getMetadata(context)
-								.getCategory(), "Griffon"));
-	}
+            case "JavaFx-Groovy":
+                griffonFacet = griffonFacetImpl_javaFx_groovy;
+                break;
+
+            default:
+                return Results.fail("Griffon couldn't be installed. Framework & Language Combination not yet implemented");
+        }
+
+        if (facetFactory.install(getSelectedProject(context.getUIContext()), griffonFacet)) {
+            return Results.success("Griffon has been installed.");
+        }
+
+        return Results.success("Your project is modified as a Griffon Project");
+    }
+
+    @Override
+    public void initializeUI(UIBuilder builder) throws Exception {
+        builder.add(frameworkType)
+                .add(languageType);
+    }
+
+    @Override
+    protected boolean isProjectRequired() {
+        return true;
+    }
+
+    @Override
+    public UICommandMetadata getMetadata(UIContext context) {
+        return Metadata
+                .from(super.getMetadata(context), getClass())
+                .name("Griffon: Setup Project")
+                .description("Setup a Griffon project")
+                .category(
+                        Categories.create(super.getMetadata(context)
+                                .getCategory(), "Griffon"));
+    }
 
 }

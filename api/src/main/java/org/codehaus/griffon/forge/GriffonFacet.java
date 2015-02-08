@@ -7,7 +7,6 @@ import org.jboss.forge.furnace.versions.Version;
 
 public interface GriffonFacet extends ProjectFacet {
 
-
     Version getVersion();
 
     void setFramework(FrameworkTypes framework);
