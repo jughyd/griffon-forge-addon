@@ -48,8 +48,7 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         this.installer = installer;
     }
 
-    protected AbstractGriffonFacet(final DependencyInstaller installer, FrameworkTypes framework, LanguageTypes language)
-    {
+    protected AbstractGriffonFacet(final DependencyInstaller installer, FrameworkTypes framework, LanguageTypes language) {
         this(installer);
         setFramework(framework);
         setLanguage(language);
@@ -57,7 +56,7 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
 
     @Override
     public boolean install() {
-        if(framework == null || language == null)
+        if (framework == null || language == null)
             throw new RuntimeException("Either Framework or Language is not set");
         return true;
     }
@@ -69,7 +68,7 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
 
     @Override
     public String toString() {
-        return framework.toString() + "-"+language.toString();
+        return framework.toString() + "-" + language.toString();
     }
 
     protected void createFolders() {

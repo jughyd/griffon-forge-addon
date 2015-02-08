@@ -1,7 +1,6 @@
 package org.codehaus.griffon.forge.ui.setup;
 
 import org.codehaus.griffon.forge.GriffonFacet;
-import org.codehaus.griffon.forge.facets.GriffonFacetImpl_2_0;
 import org.codehaus.griffon.forge.facets.GriffonFacetImpl_JavaFx_Groovy;
 import org.codehaus.griffon.forge.facets.GriffonFacetImpl_JavaFx_Java;
 import org.codehaus.griffon.forge.ui.AbstractGriffonCommand;
@@ -50,8 +49,7 @@ public class SetupCommand extends AbstractGriffonCommand {
     @Override
     public Result execute(UIExecutionContext context) throws Exception {
 
-        switch (frameworkType.getValue().toString() + "-" +languageType.getValue().toString())
-        {
+        switch (frameworkType.getValue().toString() + "-" + languageType.getValue().toString()) {
             case "JavaFx-Java":
                 griffonFacet = griffonFacetImpl_javaFx_java;
                 break;
