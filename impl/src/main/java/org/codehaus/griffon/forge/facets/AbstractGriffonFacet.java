@@ -75,6 +75,11 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
     protected void createFolders() {
         Project selectedProject = getFaceted();
         DirectoryResource directoryResource = (DirectoryResource) selectedProject.getRoot();
+
+        directoryResource.getOrCreateChildDirectory("config");
+        directoryResource.getOrCreateChildDirectory("config/checkstyle");
+        directoryResource.getOrCreateChildDirectory("config/codenarc");
+
         directoryResource.getOrCreateChildDirectory("griffon-app");
         directoryResource.getOrCreateChildDirectory("griffon-app/conf");
         directoryResource.getOrCreateChildDirectory("griffon-app/cotrollers");
@@ -86,8 +91,11 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         directoryResource.getOrCreateChildDirectory("griffon-app/resources/org/example");
         directoryResource.getOrCreateChildDirectory("griffon-app/services");
         directoryResource.getOrCreateChildDirectory("griffon-app/views");
+
         directoryResource.getOrCreateChildDirectory("maven");
-        directoryResource.getOrCreateChildDirectory("config");
+        directoryResource.getOrCreateChildDirectory("maven/distribution");
+        directoryResource.getOrCreateChildDirectory("maven/distribution/bin");
+
     }
 
     protected void addDependencies() {
