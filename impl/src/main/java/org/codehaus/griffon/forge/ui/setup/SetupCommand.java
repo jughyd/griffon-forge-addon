@@ -1,6 +1,9 @@
 package org.codehaus.griffon.forge.ui.setup;
 
 import org.codehaus.griffon.forge.GriffonFacet;
+import org.codehaus.griffon.forge.facets.GriffonFacetImpl_2_0;
+import org.codehaus.griffon.forge.facets.GriffonFacetImpl_JavaFx_Groovy;
+import org.codehaus.griffon.forge.facets.GriffonFacetImpl_JavaFx_Java;
 import org.codehaus.griffon.forge.ui.AbstractGriffonCommand;
 import org.codehaus.griffon.types.FrameworkTypes;
 import org.codehaus.griffon.types.LanguageTypes;
@@ -26,8 +29,17 @@ public class SetupCommand extends AbstractGriffonCommand {
             .getLogger(SetupCommand.class.getName());
 
     @Inject
-    @WithAttributes(required = true, label = "Griffon Version", defaultValue = "2.0", shortName = 'v')
+    @WithAttributes(required = true, label = "Griffon Version", defaultValue = "JAVAFX-JAVA", shortName = 'v')
     private UISelectOne<GriffonFacet> griffonVersion;
+
+    @Inject
+    GriffonFacetImpl_2_0 griffonFacetImpl_2_0;
+
+    @Inject
+    GriffonFacetImpl_JavaFx_Java griffonFacetImpl_javaFx_java;
+
+    @Inject
+    GriffonFacetImpl_JavaFx_Groovy griffonFacetImpl_javaFx_groovy;
 
     @Inject
     @WithAttributes(label = "Framework", type = InputType.DROPDOWN, shortName = 'f')
@@ -43,10 +55,24 @@ public class SetupCommand extends AbstractGriffonCommand {
     @Override
     public Result execute(UIExecutionContext context) throws Exception {
 
-        GriffonFacet griffonFacet = griffonVersion.getValue();
+        GriffonFacet griffonFacet;
 
-        griffonFacet.setFramework(frameworkType.getValue());
-        griffonFacet.setLanguage(languageType.getValue());
+//        griffonFacet.setFramework(frameworkType.getValue());
+//        griffonFacet.setLanguage(languageType.getValue());
+
+        switch (frameworkType.getValue().toString() + "-" +languageType.getValue().toString())
+        {
+            case "JavaFx-Java":
+                griffonFacet = griffonFacetImpl_javaFx_java;
+                break;
+
+            case "JavaFx-Groovy":
+                griffonFacet = griffonFacetImpl_javaFx_groovy;
+                break;
+
+            default:
+                return Results.fail("Griffon couldn't be installed. Framework & Language Combination not yet implemented");
+        }
 
         if (facetFactory.install(getSelectedProject(context.getUIContext()), griffonFacet)) {
             return Results.success("Griffon has been installed.");
@@ -57,8 +83,7 @@ public class SetupCommand extends AbstractGriffonCommand {
 
     @Override
     public void initializeUI(UIBuilder builder) throws Exception {
-        builder.add(griffonVersion)
-                .add(frameworkType)
+        builder.add(frameworkType)
                 .add(languageType);
     }
 
