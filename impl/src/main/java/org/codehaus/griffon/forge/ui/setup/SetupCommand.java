@@ -29,13 +29,6 @@ public class SetupCommand extends AbstractGriffonCommand {
             .getLogger(SetupCommand.class.getName());
 
     @Inject
-    @WithAttributes(required = true, label = "Griffon Version", defaultValue = "JAVAFX-JAVA", shortName = 'v')
-    private UISelectOne<GriffonFacet> griffonVersion;
-
-    @Inject
-    GriffonFacetImpl_2_0 griffonFacetImpl_2_0;
-
-    @Inject
     GriffonFacetImpl_JavaFx_Java griffonFacetImpl_javaFx_java;
 
     @Inject
@@ -52,13 +45,10 @@ public class SetupCommand extends AbstractGriffonCommand {
     @Inject
     private FacetFactory facetFactory;
 
+    private GriffonFacet griffonFacet;
+
     @Override
     public Result execute(UIExecutionContext context) throws Exception {
-
-        GriffonFacet griffonFacet;
-
-//        griffonFacet.setFramework(frameworkType.getValue());
-//        griffonFacet.setLanguage(languageType.getValue());
 
         switch (frameworkType.getValue().toString() + "-" +languageType.getValue().toString())
         {
@@ -78,7 +68,7 @@ public class SetupCommand extends AbstractGriffonCommand {
             return Results.success("Griffon has been installed.");
         }
 
-        return Results.success("Your project is modified as a Griffon Project");
+        return Results.fail("Your project is couldn't be modified as a Griffon Project.\n Either it is already modified or some unknown error occured.");
     }
 
     @Override
