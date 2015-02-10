@@ -1,6 +1,8 @@
 package org.codehaus.griffon.forge.facets;
 
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
+import org.jboss.forge.furnace.versions.SingleVersion;
+import org.jboss.forge.furnace.versions.Version;
 
 import javax.inject.Inject;
 import java.util.logging.Level;
@@ -18,4 +20,31 @@ public class GriffonFacetImpl_2_0 extends AbstractGriffonFacet {
 
     }
 
+    @Override
+    public boolean install() {
+        createFolders();
+        addDependencies();
+        return true;
+    }
+
+    @Override
+    protected void createFolders() {
+        super.createFolders();
+
+    }
+
+    @Override
+    protected void addDependencies() {
+        super.addDependencies();
+        addDependency(GRIFFON_CORE_COMPILE,"2.0");
+        addDependency(GRIFFON_JAVAFX,"2.0");
+        addDependency(GRIFFON_GUICE);
+        addDependency(GRIFFON_CORE_TEST);
+        addDependency(GROOVY_ALL);
+    }
+
+    @Override
+    public Version getVersion() {
+        return new SingleVersion("2.0");
+    }
 }
