@@ -48,12 +48,6 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         this.installer = installer;
     }
 
-    protected AbstractGriffonFacet(final DependencyInstaller installer, FrameworkTypes framework, LanguageTypes language) {
-        this(installer);
-        setFramework(framework);
-        setLanguage(language);
-    }
-
     @Override
     public boolean install() {
         if (framework == null || language == null)
@@ -68,7 +62,7 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
 
     @Override
     public String toString() {
-        return framework.toString() + "-" + language.toString();
+        return getVersion().toString();
     }
 
     protected void createFolders() {
@@ -99,25 +93,46 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
 
     protected void addDependencies() {
         builder = DependencyBuilder.create();
-
-        addDependency(GRIFFON_CORE_COMPILE);
-
-        addDependency(GRIFFON_GUICE);
-        addDependency(GRIFFON_CORE_TEST);
-        addDependency(GROOVY_ALL);
         addDependency(LOG4J);
         addDependency(SLF4J_LOG4J12);
         addDependency(SPOCK_CORE);
         addDependency(JUNIT);
     }
 
-    protected void addDependency(String coordinate) {
+    protected void addDependency(String baseCoordinate) {
         DependencyQuery query = DependencyQueryBuilder
-                .create(coordinate)
+                .create(baseCoordinate)
                 .setFilter(new NonSnapshotDependencyFilter())
                 .setRepositories(dependencyRepository);
         List<Coordinate> coordinates = dependencyResolver.resolveVersions(query);
         builder.setCoordinate(coordinates.get(coordinates.size() - 1));
+
+        installer.install(getFaceted(), builder);
+    }
+
+    protected void addDependency(String baseCoordinate, String majorVersion) {
+        DependencyQuery query = DependencyQueryBuilder
+                .create(baseCoordinate)
+                .setFilter(new NonSnapshotDependencyFilter())
+                .setRepositories(dependencyRepository);
+        List<Coordinate> coordinates = dependencyResolver.resolveVersions(query);
+
+        int i = 0;
+        for(Coordinate coordinate : coordinates){
+            if(coordinate.getVersion().startsWith(majorVersion))
+                break;
+            i++;
+        }
+
+        int v = i;
+        for(; v < coordinates.size(); v++){
+            if(!coordinates.get(v).getVersion().startsWith(majorVersion))
+                break;
+        }
+
+        v--;
+
+        builder.setCoordinate(coordinates.get(v));
 
         installer.install(getFaceted(), builder);
     }
