@@ -53,7 +53,6 @@ public class SetupCommand {
     }
 
 
-
     @Test
     public void testSetupCommand() {
 

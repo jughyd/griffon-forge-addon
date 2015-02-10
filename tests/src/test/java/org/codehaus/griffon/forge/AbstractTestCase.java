@@ -1,5 +1,4 @@
 package org.codehaus.griffon.forge;
 
-public abstract class AbstractTestCase
-{
+public abstract class AbstractTestCase {
 }
