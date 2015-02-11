@@ -80,8 +80,6 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         directoryResource.getOrCreateChildDirectory("griffon-app/lifestyle");
         directoryResource.getOrCreateChildDirectory("griffon-app/models");
         directoryResource.getOrCreateChildDirectory("griffon-app/resources");
-        directoryResource.getOrCreateChildDirectory("griffon-app/resources/org");
-        directoryResource.getOrCreateChildDirectory("griffon-app/resources/org/example");
         directoryResource.getOrCreateChildDirectory("griffon-app/services");
         directoryResource.getOrCreateChildDirectory("griffon-app/views");
 
