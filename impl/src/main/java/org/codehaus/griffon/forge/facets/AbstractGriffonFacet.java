@@ -7,10 +7,14 @@ import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.DependencyQuery;
 import org.jboss.forge.addon.dependencies.DependencyRepository;
 import org.jboss.forge.addon.dependencies.DependencyResolver;
+import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyBuilder;
 import org.jboss.forge.addon.dependencies.builder.DependencyQueryBuilder;
 import org.jboss.forge.addon.dependencies.util.NonSnapshotDependencyFilter;
 import org.jboss.forge.addon.facets.AbstractFacet;
+import org.jboss.forge.addon.maven.plugins.ExecutionBuilder;
+import org.jboss.forge.addon.maven.plugins.MavenPluginBuilder;
+import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
@@ -33,6 +37,13 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
     public static final String SPOCK_CORE = "org.spockframework:spock-core";
     public static final String JUNIT = "junit:junit";
     public static final String GRIFFON_CORE_COMPILE = "org.codehaus.griffon:griffon-core-compile";
+
+    public static final String JAVAFX_MAVEN_PLUGIN = "com.zenjava:javafx-maven-plugin:2.0";
+    public static final String MAVEN_ANTRUN_PLUGIN = "org.apache.maven.plugins:maven-antrun-plugin:1.8";
+    public static final String MAVEN_ASSEMBLY_PLUGIN = "org.apache.maven.plugins:maven-assembly-plugin:2.5.3";
+    public static final String MAVEN_DEPENDENCY_PLUGIN = "org.apache.maven.plugins:maven-dependency-plugin:2.1";
+    public static final String MAVEN_RELEASE_PLUGIN = "org.apache.maven.plugins:maven-release-plugin:2.0";
+    public static final String MAVEN_CLEAN_PLUGIN = "org.apache.maven.plugins:maven-clean-plugin:2.4.1";
 
     private DependencyBuilder builder;
     private DependencyInstaller installer;
@@ -95,6 +106,31 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         addDependency(SLF4J_LOG4J12);
         addDependency(SPOCK_CORE);
         addDependency(JUNIT);
+    }
+
+    protected void addPlugins() {
+        addPlugin(JAVAFX_MAVEN_PLUGIN);
+        addPlugin(MAVEN_ANTRUN_PLUGIN);
+    }
+
+    private void addPlugin(String baseCoordinate) {
+        Coordinate plugInCoordinate = CoordinateBuilder.create(baseCoordinate);
+        MavenPluginFacet facet = getFaceted().getFacet(MavenPluginFacet.class);
+        MavenPluginBuilder plugin = MavenPluginBuilder.create().setCoordinate(plugInCoordinate);
+        facet.addPlugin(plugin);
+    }
+
+    private void addPlugin(String baseCoordinate, String id, String phase, String goal) {
+        Coordinate plugInCoordinate = CoordinateBuilder.create(baseCoordinate);
+        MavenPluginFacet facet = getFaceted().getFacet(MavenPluginFacet.class);
+        MavenPluginBuilder plugin = MavenPluginBuilder.create()
+                            .setCoordinate(plugInCoordinate);
+        ExecutionBuilder execution = ExecutionBuilder.create()
+                                            .addGoal(goal)
+                                            .setId(id)
+                                            .setPhase(phase);
+        plugin.addExecution(execution);
+        facet.addPlugin(plugin);
     }
 
     protected void addDependency(String baseCoordinate) {

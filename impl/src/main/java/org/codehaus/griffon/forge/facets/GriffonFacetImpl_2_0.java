@@ -24,8 +24,12 @@ public class GriffonFacetImpl_2_0 extends AbstractGriffonFacet {
     public boolean install() {
         createFolders();
         addDependencies();
+        addPlugins();
         return true;
     }
+
+
+
 
     @Override
     protected void createFolders() {
