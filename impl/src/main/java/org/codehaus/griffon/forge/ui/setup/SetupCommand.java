@@ -20,6 +20,8 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import javax.inject.Inject;
 import java.util.logging.Logger;
 
+import static org.codehaus.griffon.utils.MessageUtil.properties;
+
 public class SetupCommand extends AbstractGriffonCommand {
 
     private static final Logger log = Logger
@@ -45,27 +47,19 @@ public class SetupCommand extends AbstractGriffonCommand {
     @Override
     public Result execute(UIExecutionContext context) throws Exception {
 
+        griffonFacet = griffonVersion.getValue();
+
         FrameworkTypes frameworkTypeValue = frameworkType.getValue();
         LanguageTypes languageTypeValue = languageType.getValue();
-
-        switch (frameworkTypeValue.toString() + "-" + languageTypeValue.toString()) {
-            case "JavaFx-Java":          // only the language and framework combinations that are implemented and tested will be listed in switch cases
-            case "JavaFx-Groovy":        // this is not yet implemented but kept here as an example
-                griffonFacet = griffonVersion.getValue();
-                break;
-
-            default:
-                return Results.fail("Griffon couldn't be installed. Framework & Language Combination not yet implemented");
-        }
 
         griffonFacet.setLanguage(languageTypeValue);
         griffonFacet.setFramework(frameworkTypeValue);
 
         if (facetFactory.install(getSelectedProject(context.getUIContext()), griffonFacet)) {
-            return Results.success("Griffon has been installed.");
+            return Results.success(properties.getMessage("plugin.install.success"));
         }
 
-        return Results.fail("Your project is couldn't be modified as a Griffon Project.\n Either it is already modified or some unknown error occured.");
+        return Results.fail(properties.getMessage("plugin.install.failure"));
     }
 
     @Override
@@ -84,8 +78,8 @@ public class SetupCommand extends AbstractGriffonCommand {
     public UICommandMetadata getMetadata(UIContext context) {
         return Metadata
                 .from(super.getMetadata(context), getClass())
-                .name("Griffon: Setup Project")
-                .description("Setup a Griffon project")
+                .name(properties.getMetadataValue("setup.name"))
+                .description(properties.getMetadataValue("setup.description"))
                 .category(
                         Categories.create(super.getMetadata(context)
                                 .getCategory(), "Griffon"));
