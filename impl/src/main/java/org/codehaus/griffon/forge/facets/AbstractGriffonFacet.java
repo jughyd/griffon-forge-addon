@@ -18,10 +18,20 @@ import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
-import org.jboss.forge.addon.resource.DirectoryResource;
+import org.jboss.forge.addon.projects.facets.ResourcesFacet;
+import org.jboss.forge.addon.resource.*;
+import org.jboss.forge.addon.templates.Template;
+import org.jboss.forge.addon.templates.TemplateFactory;
+import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
+import org.jboss.forge.addon.ui.result.Results;
 
 import javax.inject.Inject;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         implements ProjectFacet, GriffonFacet {
@@ -55,6 +65,12 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
     private DependencyResolver dependencyResolver;
 
     @Inject
+    ResourceFactory resourceFactory;
+
+    @Inject
+    TemplateFactory templateFactory;
+
+    @Inject
     public AbstractGriffonFacet(final DependencyInstaller installer) {
         this.installer = installer;
     }
@@ -76,14 +92,14 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         return getVersion().toString();
     }
 
-    protected void createFolders() {
+    protected void createFolders() throws IOException {
         Project selectedProject = getFaceted();
         DirectoryResource directoryResource = (DirectoryResource) selectedProject.getRoot();
 
         directoryResource.getOrCreateChildDirectory("config");
         directoryResource.getOrCreateChildDirectory("config/checkstyle");
         directoryResource.getOrCreateChildDirectory("config/codenarc");
-
+        createConfigFiles(directoryResource.getOrCreateChildDirectory("config"));
         directoryResource.getOrCreateChildDirectory("griffon-app");
         directoryResource.getOrCreateChildDirectory("griffon-app/conf");
         directoryResource.getOrCreateChildDirectory("griffon-app/cotrollers");
@@ -97,6 +113,21 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         directoryResource.getOrCreateChildDirectory("maven");
         directoryResource.getOrCreateChildDirectory("maven/distribution");
         directoryResource.getOrCreateChildDirectory("maven/distribution/bin");
+
+    }
+
+    private void createConfigFiles(DirectoryResource configDirectory) throws IOException {
+
+        FileResource headerFile = (FileResource) configDirectory.getChild("HEADER");
+        headerFile.createNewFile();
+
+        URL headerFileUrl = getClass().getResource("/templates" + File.separator + "config"+File.separator+"HEADER.ftl");
+        URLResource headerTemplateResource = resourceFactory.create(headerFileUrl).reify(URLResource.class);
+        Template template = templateFactory.create(headerTemplateResource, FreemarkerTemplate.class);
+
+        Map<String, Object> templateContext = new HashMap<String,Object>();
+        templateContext.put("yearvariable","${year}");
+        headerFile.setContents(template.process(templateContext));
 
     }
 
