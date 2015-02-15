@@ -18,17 +18,19 @@ import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
-import org.jboss.forge.addon.projects.facets.ResourcesFacet;
 import org.jboss.forge.addon.resource.*;
 import org.jboss.forge.addon.templates.Template;
 import org.jboss.forge.addon.templates.TemplateFactory;
 import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
-import org.jboss.forge.addon.ui.result.Results;
 
 import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,10 +98,8 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         Project selectedProject = getFaceted();
         DirectoryResource directoryResource = (DirectoryResource) selectedProject.getRoot();
 
-        directoryResource.getOrCreateChildDirectory("config");
-        directoryResource.getOrCreateChildDirectory("config/checkstyle");
-        directoryResource.getOrCreateChildDirectory("config/codenarc");
-        createConfigFiles(directoryResource.getOrCreateChildDirectory("config"));
+        createConfigFolder(directoryResource);
+
         directoryResource.getOrCreateChildDirectory("griffon-app");
         directoryResource.getOrCreateChildDirectory("griffon-app/conf");
         directoryResource.getOrCreateChildDirectory("griffon-app/cotrollers");
@@ -116,19 +116,53 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
 
     }
 
-    private void createConfigFiles(DirectoryResource configDirectory) throws IOException {
+    /**
+     * Creates the config folder and its files
+     * @param rootDir
+     * @throws IOException
+     */
+    private void createConfigFolder(DirectoryResource rootDir) throws IOException {
+        DirectoryResource configDirectory = rootDir.getOrCreateChildDirectory("config");
+        DirectoryResource checkStyleDirectory = rootDir.getOrCreateChildDirectory("config/checkstyle");
+        DirectoryResource condenarcDirectory = rootDir.getOrCreateChildDirectory("config/codenarc");
 
-        FileResource headerFile = (FileResource) configDirectory.getChild("HEADER");
-        headerFile.createNewFile();
+        FileResource headerFileTarget = (FileResource) configDirectory.getChild("HEADER");
+        headerFileTarget.createNewFile();
 
-        URL headerFileUrl = getClass().getResource("/templates" + File.separator + "config"+File.separator+"HEADER.ftl");
-        URLResource headerTemplateResource = resourceFactory.create(headerFileUrl).reify(URLResource.class);
+        URL headerFileSourceUrl = getClass().getResource("/templates" + File.separator + "config"+File.separator+"HEADER.ftl");
+        URLResource headerTemplateResource = resourceFactory.create(headerFileSourceUrl).reify(URLResource.class);
         Template template = templateFactory.create(headerTemplateResource, FreemarkerTemplate.class);
 
         Map<String, Object> templateContext = new HashMap<String,Object>();
-        templateContext.put("yearvariable","${year}");
-        headerFile.setContents(template.process(templateContext));
+        templateContext.put("yearvariable", "${year}");
+        headerFileTarget.setContents(template.process(templateContext));
 
+        // simply copying the files as there is no template processing required
+        copyFileFromTemplates(checkStyleDirectory,
+                "checkstyle.xml",
+                "config" + File.separator + "checkstyle" + File.separator + "checkstyle.xml");
+
+        copyFileFromTemplates(condenarcDirectory,
+                "codenarc.groovy",
+                "config" + File.separator + "codenarc" + File.separator + "codenarc.groovy");
+
+    }
+
+    /**
+     * Copies the given file from templates folder to the target directory
+     * @param targetDirectory
+     * @param targetFileName
+     * @param sourceFileName
+     * @throws IOException
+     */
+    private void copyFileFromTemplates(DirectoryResource targetDirectory, String targetFileName, String sourceFileName) throws IOException {
+        URL checkStyleXmlSourceUrl = getClass().getResource("/templates" + File.separator +sourceFileName);
+        FileResource checkStyleXmlTarget = (FileResource) targetDirectory.getChild(targetFileName);
+
+        if(checkStyleXmlTarget.exists())
+            checkStyleXmlTarget.delete();
+
+        Files.copy(checkStyleXmlSourceUrl.openStream(), Paths.get(checkStyleXmlTarget.getFullyQualifiedName()));
     }
 
     protected void addDependencies() {
@@ -144,14 +178,14 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         addPlugin(MAVEN_ANTRUN_PLUGIN);
     }
 
-    private void addPlugin(String baseCoordinate) {
+    protected void addPlugin(String baseCoordinate) {
         Coordinate plugInCoordinate = CoordinateBuilder.create(baseCoordinate);
         MavenPluginFacet facet = getFaceted().getFacet(MavenPluginFacet.class);
         MavenPluginBuilder plugin = MavenPluginBuilder.create().setCoordinate(plugInCoordinate);
         facet.addPlugin(plugin);
     }
 
-    private void addPlugin(String baseCoordinate, String id, String phase, String goal) {
+    protected void addPlugin(String baseCoordinate, String id, String phase, String goal) {
         Coordinate plugInCoordinate = CoordinateBuilder.create(baseCoordinate);
         MavenPluginFacet facet = getFaceted().getFacet(MavenPluginFacet.class);
         MavenPluginBuilder plugin = MavenPluginBuilder.create()
@@ -210,5 +244,16 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
     @Override
     public void setLanguage(LanguageTypes language) {
         this.language = language;
+    }
+
+    /**
+     * Returns the exception as a string so that it can be printed easily
+     * @param e
+     * @return
+     */
+    protected String getExceptionAsString(Throwable e){
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        return e.getMessage() + System.lineSeparator() + sw.toString();
     }
 }
