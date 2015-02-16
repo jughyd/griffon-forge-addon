@@ -1,5 +1,6 @@
 package org.codehaus.griffon.forge.facets;
 
+import org.codehaus.griffon.GriffonConstants;
 import org.codehaus.griffon.forge.GriffonFacet;
 import org.codehaus.griffon.types.FrameworkTypes;
 import org.codehaus.griffon.types.LanguageTypes;
@@ -36,26 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
-        implements ProjectFacet, GriffonFacet {
-
-    private static final DependencyRepository dependencyRepository = new DependencyRepository("jcenter", "http://jcenter.bintray.com/");
-
-    public static final String GRIFFON_JAVAFX = "org.codehaus.griffon:griffon-javafx";
-    public static final String GRIFFON_GUICE = "org.codehaus.griffon:griffon-guice";
-    public static final String GRIFFON_CORE_TEST = "org.codehaus.griffon:griffon-core-test";
-    public static final String GROOVY_ALL = "org.codehaus.groovy:groovy-all";
-    public static final String LOG4J = "log4j:log4j";
-    public static final String SLF4J_LOG4J12 = "org.slf4j:slf4j-log4j12";
-    public static final String SPOCK_CORE = "org.spockframework:spock-core";
-    public static final String JUNIT = "junit:junit";
-    public static final String GRIFFON_CORE_COMPILE = "org.codehaus.griffon:griffon-core-compile";
-
-    public static final String JAVAFX_MAVEN_PLUGIN = "com.zenjava:javafx-maven-plugin:2.0";
-    public static final String MAVEN_ANTRUN_PLUGIN = "org.apache.maven.plugins:maven-antrun-plugin:1.8";
-    public static final String MAVEN_ASSEMBLY_PLUGIN = "org.apache.maven.plugins:maven-assembly-plugin:2.5.3";
-    public static final String MAVEN_DEPENDENCY_PLUGIN = "org.apache.maven.plugins:maven-dependency-plugin:2.1";
-    public static final String MAVEN_RELEASE_PLUGIN = "org.apache.maven.plugins:maven-release-plugin:2.0";
-    public static final String MAVEN_CLEAN_PLUGIN = "org.apache.maven.plugins:maven-clean-plugin:2.4.1";
+        implements ProjectFacet, GriffonFacet, GriffonConstants {
 
     private DependencyBuilder builder;
     private DependencyInstaller installer;
