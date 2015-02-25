@@ -92,10 +92,60 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         directoryResource.getOrCreateChildDirectory("griffon-app/services");
         directoryResource.getOrCreateChildDirectory("griffon-app/views");
 
-        directoryResource.getOrCreateChildDirectory("maven");
-        directoryResource.getOrCreateChildDirectory("maven/distribution");
-        directoryResource.getOrCreateChildDirectory("maven/distribution/bin");
+        createMavenFolder(directoryResource);
+    }
 
+    private void createMavenFolder(DirectoryResource rootDir) throws IOException {
+        DirectoryResource mavenDir = rootDir.getOrCreateChildDirectory("maven");
+        DirectoryResource distributionDir = rootDir.getOrCreateChildDirectory("maven/distribution");
+        DirectoryResource binDir = rootDir.getOrCreateChildDirectory("maven/distribution/bin");
+
+        copyFileFromTemplates(mavenDir,
+                "ant-macros.xml",
+                "maven" + File.separator + File.separator + "ant-macros.xml");
+
+        copyFileFromTemplates(mavenDir,
+                "assembly-descriptor.xml",
+                "maven" + File.separator + File.separator + "assembly-descriptor.xml");
+
+        copyFileFromTemplates(mavenDir,
+                "post-site.xml",
+                "maven" + File.separator + File.separator + "post-site.xml");
+
+        copyFileFromTemplates(mavenDir,
+                "prepare-izpack.xml",
+                "maven" + File.separator + File.separator + "prepare-izpack.xml");
+
+        copyFileFromTemplates(mavenDir,
+                "process-resources.xml",
+                "maven" + File.separator + File.separator + "process-resources.xml");
+
+        String projectname = getFaceted().getRoot().getName();
+
+        FileResource projectstartupsh = (FileResource) binDir.getChild(projectname);
+        projectstartupsh.createNewFile();
+
+        URL projectstartuptemplateurl = getClass().getResource("/templates" + File.separator + "javafx-java"
+                +File.separator + "maven" +File.separator + "distribution"+ File.separator + "bin"
+                +File.separator+"project.ftl");
+        URLResource projectstartuptemplateresource = resourceFactory.create(projectstartuptemplateurl).reify(URLResource.class);
+        Template template = templateFactory.create(projectstartuptemplateresource, FreemarkerTemplate.class);
+
+        Map<String, Object> templateContext = new HashMap<String,Object>();
+        templateContext.put("projectname", projectname);
+        templateContext.put("JVM_OPTS","${JVM_OPTS[@]}");
+        projectstartupsh.setContents(template.process(templateContext));
+
+        FileResource projectstartupbat = (FileResource) binDir.getChild(projectname+".bat");
+        projectstartupbat.createNewFile();
+
+        URL projectstartupbattemplateurl = getClass().getResource("/templates" + File.separator + "javafx-java"
+                +File.separator + "maven" +File.separator + "distribution"+ File.separator + "bin"
+                +File.separator+"project.bat.ftl");
+        URLResource projectstartupbattemplateresource = resourceFactory.create(projectstartupbattemplateurl).reify(URLResource.class);
+        Template template1 = templateFactory.create(projectstartupbattemplateresource, FreemarkerTemplate.class);
+
+        projectstartupbat.setContents(template1.process(templateContext));
     }
 
     /**
