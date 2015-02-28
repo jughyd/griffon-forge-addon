@@ -24,8 +24,8 @@
                     <filter token="application.name"
                             value="${project.name}"/>
                     <filter
-                        token="application.version"
-                        value="${project.version}"/>
+                            token="application.version"
+                            value="${project.version}"/>
                     <filter token="griffon.version"
                             value="${griffon.version}"/>
                 </filterset>
