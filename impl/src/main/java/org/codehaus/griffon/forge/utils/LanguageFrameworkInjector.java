@@ -9,7 +9,6 @@ import org.jboss.forge.addon.templates.Template;
 import org.jboss.forge.addon.templates.TemplateFactory;
 import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -18,7 +17,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 /**
- * Created by buddha on 2/28/15.
+ * @author jbuddha
  */
 public abstract class LanguageFrameworkInjector {
 
@@ -28,48 +27,86 @@ public abstract class LanguageFrameworkInjector {
 
     TemplateFactory templateFactory;
 
-    public LanguageFrameworkInjector(Project project, ResourceFactory resourceFactory, TemplateFactory templateFactory){
+    public LanguageFrameworkInjector(Project project, ResourceFactory resourceFactory, TemplateFactory templateFactory) {
         this.project = project;
         this.resourceFactory = resourceFactory;
         this.templateFactory = templateFactory;
     }
 
+    /**
+     * Creates necessary files and folders
+     *
+     * @throws IOException
+     */
     public void createFolders() throws IOException {
         DirectoryResource directoryResource = (DirectoryResource) project.getRoot();
         createConfigFolder(directoryResource);
         createGriffonAppFolder(directoryResource);
         createMavenFolder(directoryResource);
+
     }
 
+    /**
+     * Utility method to process an ftl file by replacing all the variables with the values provided in templateVariables
+     * and copy the final file to the targetDirectory
+     *
+     * @param targetDirectory
+     * @param targetFileName
+     * @param templateFilePath
+     * @param templateVariables
+     * @throws IOException
+     */
     void processTemplate(DirectoryResource targetDirectory, String targetFileName, String templateFilePath, Map templateVariables) throws IOException {
-        FileResource projectstartupsh = (FileResource) targetDirectory.getChild(targetFileName);
-        projectstartupsh.createNewFile();
+        FileResource targetResource = (FileResource) targetDirectory.getChild(targetFileName);
+        targetResource.createNewFile();
 
-        URL projectstartuptemplateurl = getClass().getResource("/templates" + File.separator + templateFilePath);
-        URLResource projectstartuptemplateresource = resourceFactory.create(projectstartuptemplateurl).reify(URLResource.class);
-        Template template = templateFactory.create(projectstartuptemplateresource, FreemarkerTemplate.class);
+        URL templateUrl = getClass().getResource("/templates" + File.separator + templateFilePath);
+        URLResource templateResource = resourceFactory.create(templateUrl).reify(URLResource.class);
+        Template template = templateFactory.create(templateResource, FreemarkerTemplate.class);
 
-        projectstartupsh.setContents(template.process(templateVariables));
+        targetResource.setContents(template.process(templateVariables));
     }
 
     /**
      * Copies the given file from templates folder to the target directory
+     *
      * @param targetDirectory
      * @param targetFileName
      * @param sourceFileName
      * @throws java.io.IOException
      */
-    private void copyFileFromTemplates(DirectoryResource targetDirectory, String targetFileName, String sourceFileName) throws IOException {
-        URL checkStyleXmlSourceUrl = getClass().getResource("/templates" + File.separator +sourceFileName);
-        FileResource checkStyleXmlTarget = (FileResource) targetDirectory.getChild(targetFileName);
+    protected void copyFileFromTemplates(DirectoryResource targetDirectory, String targetFileName, String sourceFileName) throws IOException {
+        URL sourceUrl = getClass().getResource("/templates" + File.separator + sourceFileName);
+        FileResource targetResource = (FileResource) targetDirectory.getChild(targetFileName);
 
-        if(checkStyleXmlTarget.exists())
-            checkStyleXmlTarget.delete();
+        if (targetResource.exists())
+            targetResource.delete();
 
-        Files.copy(checkStyleXmlSourceUrl.openStream(), Paths.get(checkStyleXmlTarget.getFullyQualifiedName()));
+        Files.copy(sourceUrl.openStream(), Paths.get(targetResource.getFullyQualifiedName()));
     }
 
-    public abstract void createConfigFolder(DirectoryResource directoryResource) throws IOException;
-    public abstract void createMavenFolder(DirectoryResource directoryResource) throws IOException;
-    public abstract void createGriffonAppFolder(DirectoryResource directoryResource) throws IOException;
+
+    /**
+     * Utility method to contain all the files inside config folder
+     *
+     * @param directoryResource
+     * @throws IOException
+     */
+    abstract void createConfigFolder(DirectoryResource directoryResource) throws IOException;
+
+    /**
+     * Utility method to contain all the files inside maven folder
+     *
+     * @param directoryResource
+     * @throws IOException
+     */
+    abstract void createMavenFolder(DirectoryResource directoryResource) throws IOException;
+
+    /**
+     * Utility method to contain all the files inside griffon-app folder
+     *
+     * @param directoryResource
+     * @throws IOException
+     */
+    abstract void createGriffonAppFolder(DirectoryResource directoryResource) throws IOException;
 }

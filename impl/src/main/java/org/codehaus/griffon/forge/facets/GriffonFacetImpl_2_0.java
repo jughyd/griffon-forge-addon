@@ -6,8 +6,6 @@ import org.jboss.forge.furnace.versions.Version;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,8 +35,6 @@ public class GriffonFacetImpl_2_0 extends AbstractGriffonFacet {
     }
 
 
-
-
     @Override
     protected void createFolders() throws IOException {
         super.createFolders();
@@ -48,11 +44,11 @@ public class GriffonFacetImpl_2_0 extends AbstractGriffonFacet {
     @Override
     protected void addDependencies() {
         super.addDependencies();
-        addDependency(GRIFFON_CORE_COMPILE,"2");
-        addDependency(GRIFFON_JAVAFX,"2");
-        addDependency(GRIFFON_GUICE,"2");
-        addDependency(GRIFFON_CORE_TEST,"2");
-        addDependency(GROOVY_ALL,"2");
+        addDependency(GRIFFON_CORE_COMPILE, "2");
+        addDependency(GRIFFON_JAVAFX, "2");
+        addDependency(GRIFFON_GUICE, "2");
+        addDependency(GRIFFON_CORE_TEST, "2");
+        addDependency(GROOVY_ALL, "2");
     }
 
     @Override

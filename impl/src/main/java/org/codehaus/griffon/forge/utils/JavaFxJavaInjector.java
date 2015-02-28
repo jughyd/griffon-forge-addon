@@ -12,21 +12,22 @@ import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author jbuddha on 2/28/15.
+ * @author jbuddha
  */
 public class JavaFxJavaInjector extends LanguageFrameworkInjector {
 
 
     public JavaFxJavaInjector(Project project, ResourceFactory resourceFactory, TemplateFactory templateFactory) {
-        super(project,resourceFactory,templateFactory);
+        super(project, resourceFactory, templateFactory);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void createFolders() throws IOException {
         DirectoryResource directoryResource = (DirectoryResource) project.getRoot();
@@ -36,11 +37,10 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
     }
 
     /**
-     * Creates the config folder and its files
-     * @param rootDir
-     * @throws java.io.IOException
+     * {@inheritDoc}
      */
-    private void createConfigFolder(DirectoryResource rootDir) throws IOException {
+    @Override
+    protected void createConfigFolder(DirectoryResource rootDir) throws IOException {
         DirectoryResource configDirectory = rootDir.getOrCreateChildDirectory("config");
         DirectoryResource checkStyleDirectory = rootDir.getOrCreateChildDirectory("config/checkstyle");
         DirectoryResource condenarcDirectory = rootDir.getOrCreateChildDirectory("config/codenarc");
@@ -48,11 +48,11 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
         FileResource headerFileTarget = (FileResource) configDirectory.getChild("HEADER");
         headerFileTarget.createNewFile();
 
-        URL headerFileSourceUrl = getClass().getResource("/templates" + File.separator + "config"+File.separator+"HEADER.ftl");
+        URL headerFileSourceUrl = getClass().getResource("/templates" + File.separator + "config" + File.separator + "HEADER.ftl");
         URLResource headerTemplateResource = resourceFactory.create(headerFileSourceUrl).reify(URLResource.class);
         Template template = templateFactory.create(headerTemplateResource, FreemarkerTemplate.class);
 
-        Map<String, Object> templateContext = new HashMap<String,Object>();
+        Map<String, Object> templateContext = new HashMap<String, Object>();
         templateContext.put("yearvariable", "${year}");
         headerFileTarget.setContents(template.process(templateContext));
 
@@ -67,7 +67,11 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
 
     }
 
-    private void createMavenFolder(DirectoryResource rootDir) throws IOException {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createMavenFolder(DirectoryResource rootDir) throws IOException {
         DirectoryResource mavenDir = rootDir.getOrCreateChildDirectory("maven");
         DirectoryResource distributionDir = rootDir.getOrCreateChildDirectory("maven/distribution");
         DirectoryResource binDir = rootDir.getOrCreateChildDirectory("maven/distribution/bin");
@@ -94,20 +98,23 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
 
         String projectname = project.getRoot().getName();
 
-        Map<String, Object> templateContext = new HashMap<String,Object>();
+        Map<String, Object> templateContext = new HashMap<String, Object>();
         templateContext.put("projectname", projectname);
-        templateContext.put("JVM_OPTS","${JVM_OPTS[@]}");
+        templateContext.put("JVM_OPTS", "${JVM_OPTS[@]}");
 
-        String templatePath = "javafx-java" + File.separator + "maven" +File.separator + "distribution"+ File.separator + "bin" +File.separator+"project.ftl";
+        String templatePath = "javafx-java" + File.separator + "maven" + File.separator + "distribution" + File.separator + "bin" + File.separator + "project.ftl";
         processTemplate(binDir, projectname, templatePath, templateContext);
 
-        String batTemplatePath = "javafx-java" + File.separator + "maven" +File.separator + "distribution"+ File.separator + "bin" +File.separator+"project.bat.ftl";
+        String batTemplatePath = "javafx-java" + File.separator + "maven" + File.separator + "distribution" + File.separator + "bin" + File.separator + "project.bat.ftl";
         processTemplate(binDir, projectname + ".bat", batTemplatePath, templateContext);
 
     }
 
-    private void createGriffonAppFolder(DirectoryResource rootDir)
-    {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createGriffonAppFolder(DirectoryResource rootDir) {
         rootDir.getOrCreateChildDirectory("griffon-app");
         rootDir.getOrCreateChildDirectory("griffon-app/conf");
         rootDir.getOrCreateChildDirectory("griffon-app/cotrollers");
@@ -119,20 +126,5 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
         rootDir.getOrCreateChildDirectory("griffon-app/views");
     }
 
-    /**
-     * Copies the given file from templates folder to the target directory
-     * @param targetDirectory
-     * @param targetFileName
-     * @param sourceFileName
-     * @throws IOException
-     */
-    private void copyFileFromTemplates(DirectoryResource targetDirectory, String targetFileName, String sourceFileName) throws IOException {
-        URL checkStyleXmlSourceUrl = getClass().getResource("/templates" + File.separator +sourceFileName);
-        FileResource checkStyleXmlTarget = (FileResource) targetDirectory.getChild(targetFileName);
 
-        if(checkStyleXmlTarget.exists())
-            checkStyleXmlTarget.delete();
-
-        Files.copy(checkStyleXmlSourceUrl.openStream(), Paths.get(checkStyleXmlTarget.getFullyQualifiedName()));
-    }
 }

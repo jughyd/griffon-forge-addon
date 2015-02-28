@@ -2,6 +2,7 @@ package org.codehaus.griffon.forge.facets;
 
 import org.codehaus.griffon.GriffonConstants;
 import org.codehaus.griffon.forge.GriffonFacet;
+import org.codehaus.griffon.forge.utils.JavaFxGroovyInjector;
 import org.codehaus.griffon.forge.utils.JavaFxJavaInjector;
 import org.codehaus.griffon.forge.utils.LanguageFrameworkInjector;
 import org.codehaus.griffon.types.FrameworkTypes;
@@ -71,11 +72,13 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
 
     protected void createFolders() throws IOException {
         LanguageFrameworkInjector injector = null;
-        switch (framework.toString() + language.toString()){
+        switch (framework.toString() + language.toString()) {
             case "JavaFxJava":
-                injector = new JavaFxJavaInjector(getFaceted(),resourceFactory,templateFactory);
+                injector = new JavaFxJavaInjector(getFaceted(), resourceFactory, templateFactory);
                 break;
-
+            case "JavaFxGroovy":
+                injector = new JavaFxGroovyInjector(getFaceted(), resourceFactory, templateFactory);
+                break;
             default:
                 throw new RuntimeException("Framework and Language combination not yet implemented");
         }
@@ -107,11 +110,11 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         Coordinate plugInCoordinate = CoordinateBuilder.create(baseCoordinate);
         MavenPluginFacet facet = getFaceted().getFacet(MavenPluginFacet.class);
         MavenPluginBuilder plugin = MavenPluginBuilder.create()
-                            .setCoordinate(plugInCoordinate);
+                .setCoordinate(plugInCoordinate);
         ExecutionBuilder execution = ExecutionBuilder.create()
-                                            .addGoal(goal)
-                                            .setId(id)
-                                            .setPhase(phase);
+                .addGoal(goal)
+                .setId(id)
+                .setPhase(phase);
         plugin.addExecution(execution);
         facet.addPlugin(plugin);
     }
@@ -135,15 +138,15 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         List<Coordinate> coordinates = dependencyResolver.resolveVersions(query);
 
         int i = 0;
-        for(Coordinate coordinate : coordinates){
-            if(coordinate.getVersion().startsWith(majorVersion))
+        for (Coordinate coordinate : coordinates) {
+            if (coordinate.getVersion().startsWith(majorVersion))
                 break;
             i++;
         }
 
         int v = i;
-        for(; v < coordinates.size(); v++){
-            if(!coordinates.get(v).getVersion().startsWith(majorVersion))
+        for (; v < coordinates.size(); v++) {
+            if (!coordinates.get(v).getVersion().startsWith(majorVersion))
                 break;
         }
 
@@ -166,10 +169,11 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
 
     /**
      * Returns the exception as a string so that it can be printed easily
+     *
      * @param e
      * @return
      */
-    protected String getExceptionAsString(Throwable e){
+    protected String getExceptionAsString(Throwable e) {
         StringWriter sw = new StringWriter();
         e.printStackTrace(new PrintWriter(sw));
         return e.getMessage() + System.lineSeparator() + sw.toString();
