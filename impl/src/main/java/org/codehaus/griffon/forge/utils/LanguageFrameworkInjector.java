@@ -9,7 +9,6 @@ import org.jboss.forge.addon.templates.Template;
 import org.jboss.forge.addon.templates.TemplateFactory;
 import org.jboss.forge.addon.templates.freemarker.FreemarkerTemplate;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -20,6 +19,11 @@ import java.util.Map;
  * @author jbuddha
  */
 public abstract class LanguageFrameworkInjector {
+
+    /**
+     * Template folder path
+     */
+    protected static final String TEMPLATE_DIR = "/templates/";
 
     protected Project project;
 
@@ -60,7 +64,7 @@ public abstract class LanguageFrameworkInjector {
         FileResource targetResource = (FileResource) targetDirectory.getChild(targetFileName);
         targetResource.createNewFile();
 
-        URL templateUrl = getClass().getResource("/templates" + File.separator + templateFilePath);
+        URL templateUrl = getClass().getResource(TEMPLATE_DIR + templateFilePath);
         URLResource templateResource = resourceFactory.create(templateUrl).reify(URLResource.class);
         Template template = templateFactory.create(templateResource, FreemarkerTemplate.class);
 
@@ -76,7 +80,7 @@ public abstract class LanguageFrameworkInjector {
      * @throws java.io.IOException
      */
     protected void copyFileFromTemplates(DirectoryResource targetDirectory, String targetFileName, String sourceFileName) throws IOException {
-        URL sourceUrl = getClass().getResource("/templates" + File.separator + sourceFileName);
+        URL sourceUrl = getClass().getResource(TEMPLATE_DIR + sourceFileName);
         FileResource targetResource = (FileResource) targetDirectory.getChild(targetFileName);
 
         if (targetResource.exists())
