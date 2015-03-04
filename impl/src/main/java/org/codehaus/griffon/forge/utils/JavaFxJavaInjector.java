@@ -76,8 +76,8 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
     @Override
     protected void createMavenFolder(DirectoryResource rootDir) throws IOException {
         DirectoryResource mavenDir = rootDir.getOrCreateChildDirectory("maven");
-        DirectoryResource distributionDir = rootDir.getOrCreateChildDirectory("maven/distribution");
-        DirectoryResource binDir = rootDir.getOrCreateChildDirectory("maven/distribution/bin");
+        DirectoryResource distributionDir = mavenDir.getOrCreateChildDirectory("distribution");
+        DirectoryResource binDir = distributionDir.getOrCreateChildDirectory("bin");
 
         copyFileFromTemplates(mavenDir,
                 "ant-macros.xml",
@@ -130,12 +130,12 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
 
         Map<String, String> variables = new HashMap<String, String>();
         variables.put("projectname",project.getRoot().getName());
+
         // TODO this can be even improved by changing the letter after - or _ to capital Case
         String simplename = project.getRoot().getName().replaceAll("[^A-Za-z0-9]","");
         char first = Character.toUpperCase(simplename.charAt(0));
         simplename = first + simplename.substring(1);
         variables.put("simplename",simplename);
-
 
         MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
         String topLevelPackage = metadataFacet.getProjectGroupName();
@@ -143,7 +143,7 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
             topLevelPackage = "org.example";
         }
         variables.put("toppackage",topLevelPackage);
-        processTemplate(confDir, "Config.java", "javafx-java" + File.separator + "griffon-app" + File.separator + "conf" + File.separator + "Config.java.ftl", variables);
+        processTemplate(confDir, "Config.java", "javafx-java/griffon-app/conf/Config.java.ftl", variables);
 
     }
 
