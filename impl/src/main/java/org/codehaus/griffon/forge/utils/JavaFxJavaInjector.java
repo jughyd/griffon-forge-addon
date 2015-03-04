@@ -134,22 +134,15 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
         String simplename = project.getRoot().getName().replaceAll("[^A-Za-z0-9]","");
         char first = Character.toUpperCase(simplename.charAt(0));
         simplename = first + simplename.substring(1);
-        variables.put("simplifiedprojectname",simplename);
+        variables.put("simplename",simplename);
+
 
         MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
         String topLevelPackage = metadataFacet.getProjectGroupName();
         if(topLevelPackage == null || topLevelPackage.length() == 0) {
             topLevelPackage = "org.example";
         }
-
-        String modelClass = topLevelPackage + "." + simplename + "Model";
-        String viewClass = topLevelPackage + "." + simplename + "View";
-        String controllerClass = topLevelPackage + "." + simplename + "Controller";
-
-        variables.put("modelclass",modelClass);
-        variables.put("viewclass",viewClass);
-        variables.put("controllerclass",controllerClass);
-
+        variables.put("toppackage",topLevelPackage);
         processTemplate(confDir, "Config.java", "javafx-java" + File.separator + "griffon-app" + File.separator + "conf" + File.separator + "Config.java.ftl", variables);
 
     }
