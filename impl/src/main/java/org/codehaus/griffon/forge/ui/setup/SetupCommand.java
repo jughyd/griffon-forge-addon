@@ -32,11 +32,11 @@ public class SetupCommand extends AbstractGriffonCommand {
     private UISelectOne<GriffonFacet> griffonVersion;
 
     @Inject
-    @WithAttributes(label = "Framework", type = InputType.DROPDOWN, shortName = 'f')
+    @WithAttributes(label = "Framework", type = InputType.DROPDOWN, shortName = 'f',defaultValue = "JavaFx")
     private UISelectOne<FrameworkTypes> frameworkType;
 
     @Inject
-    @WithAttributes(label = "Language", type = InputType.DROPDOWN, shortName = 'l')
+    @WithAttributes(label = "Language", type = InputType.DROPDOWN, shortName = 'l',defaultValue = "Java")
     private UISelectOne<LanguageTypes> languageType;
 
     @Inject

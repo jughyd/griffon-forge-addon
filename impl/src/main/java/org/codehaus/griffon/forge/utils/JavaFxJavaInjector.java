@@ -51,7 +51,7 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
         FileResource headerFileTarget = (FileResource) configDirectory.getChild("HEADER");
         headerFileTarget.createNewFile();
 
-        URL headerFileSourceUrl = getClass().getResource("/templates" + File.separator + "config" + File.separator + "HEADER.ftl");
+        URL headerFileSourceUrl = getClass().getResource(TEMPLATE_DIR + "config/HEADER.ftl");
         URLResource headerTemplateResource = resourceFactory.create(headerFileSourceUrl).reify(URLResource.class);
         Template template = templateFactory.create(headerTemplateResource, FreemarkerTemplate.class);
 
@@ -62,11 +62,11 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
         // simply copying the files as there is no template processing required
         copyFileFromTemplates(checkStyleDirectory,
                 "checkstyle.xml",
-                "config" + File.separator + "checkstyle" + File.separator + "checkstyle.xml");
+                "config/checkstyle/checkstyle.xml");
 
         copyFileFromTemplates(condenarcDirectory,
                 "codenarc.groovy",
-                "config" + File.separator + "codenarc" + File.separator + "codenarc.groovy");
+                "config/codenarc/codenarc.groovy");
 
     }
 
@@ -81,23 +81,23 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
 
         copyFileFromTemplates(mavenDir,
                 "ant-macros.xml",
-                "maven" + File.separator + File.separator + "ant-macros.xml");
+                "maven/ant-macros.xml");
 
         copyFileFromTemplates(mavenDir,
                 "assembly-descriptor.xml",
-                "maven" + File.separator + File.separator + "assembly-descriptor.xml");
+                "maven/assembly-descriptor.xml");
 
         copyFileFromTemplates(mavenDir,
                 "post-site.xml",
-                "maven" + File.separator + File.separator + "post-site.xml");
+                "maven/post-site.xml");
 
         copyFileFromTemplates(mavenDir,
                 "prepare-izpack.xml",
-                "maven" + File.separator + File.separator + "prepare-izpack.xml");
+                "maven/prepare-izpack.xml");
 
         copyFileFromTemplates(mavenDir,
                 "process-resources.xml",
-                "maven" + File.separator + File.separator + "process-resources.xml");
+                "maven/process-resources.xml");
 
         String projectname = project.getRoot().getName();
 
@@ -105,10 +105,10 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
         templateContext.put("projectname", projectname);
         templateContext.put("JVM_OPTS", "${JVM_OPTS[@]}");
 
-        String templatePath = "javafx-java" + File.separator + "maven" + File.separator + "distribution" + File.separator + "bin" + File.separator + "project.ftl";
+        String templatePath = "javafx-java/maven/distribution/bin/project.ftl";
         processTemplate(binDir, projectname, templatePath, templateContext);
 
-        String batTemplatePath = "javafx-java" + File.separator + "maven" + File.separator + "distribution" + File.separator + "bin" + File.separator + "project.bat.ftl";
+        String batTemplatePath = "javafx-java/maven/distribution/bin/project.bat.ftl";
         processTemplate(binDir, projectname + ".bat", batTemplatePath, templateContext);
 
     }
