@@ -1,6 +1,9 @@
 package org.codehaus.griffon.forge.utils;
 
+import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.projects.Project;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
+import org.jboss.forge.addon.projects.facets.PackagingFacet;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
@@ -114,16 +117,41 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
      * {@inheritDoc}
      */
     @Override
-    protected void createGriffonAppFolder(DirectoryResource rootDir) {
-        rootDir.getOrCreateChildDirectory("griffon-app");
-        rootDir.getOrCreateChildDirectory("griffon-app/conf");
-        rootDir.getOrCreateChildDirectory("griffon-app/cotrollers");
-        rootDir.getOrCreateChildDirectory("griffon-app/i18n");
-        rootDir.getOrCreateChildDirectory("griffon-app/lifestyle");
-        rootDir.getOrCreateChildDirectory("griffon-app/models");
-        rootDir.getOrCreateChildDirectory("griffon-app/resources");
-        rootDir.getOrCreateChildDirectory("griffon-app/services");
-        rootDir.getOrCreateChildDirectory("griffon-app/views");
+    protected void createGriffonAppFolder(DirectoryResource rootDir) throws IOException {
+        DirectoryResource griffonAppDir = rootDir.getOrCreateChildDirectory("griffon-app");
+        DirectoryResource confDir = griffonAppDir.getOrCreateChildDirectory("conf");
+        DirectoryResource controllersDir = griffonAppDir.getOrCreateChildDirectory("controllers");
+        DirectoryResource i18nDir = griffonAppDir.getOrCreateChildDirectory("i18n");
+        DirectoryResource lifeStyleDir = griffonAppDir.getOrCreateChildDirectory("lifestyle");
+        DirectoryResource modelsDir = griffonAppDir.getOrCreateChildDirectory("models");
+        DirectoryResource resourcesDir = griffonAppDir.getOrCreateChildDirectory("resources");
+        DirectoryResource servicesDir = griffonAppDir.getOrCreateChildDirectory("services");
+        DirectoryResource viewsDir = griffonAppDir.getOrCreateChildDirectory("views");
+
+        Map<String, String> variables = new HashMap<String, String>();
+        variables.put("projectname",project.getRoot().getName());
+        // TODO this can be even improved by changing the letter after - or _ to capital Case
+        String simplename = project.getRoot().getName().replaceAll("[^A-Za-z0-9]","");
+        char first = Character.toUpperCase(simplename.charAt(0));
+        simplename = first + simplename.substring(1);
+        variables.put("simplifiedprojectname",simplename);
+
+        MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
+        String topLevelPackage = metadataFacet.getProjectGroupName();
+        if(topLevelPackage == null || topLevelPackage.length() == 0) {
+            topLevelPackage = "org.example";
+        }
+
+        String modelClass = topLevelPackage + "." + simplename + "Model";
+        String viewClass = topLevelPackage + "." + simplename + "View";
+        String controllerClass = topLevelPackage + "." + simplename + "Controller";
+
+        variables.put("modelclass",modelClass);
+        variables.put("viewclass",viewClass);
+        variables.put("controllerclass",controllerClass);
+
+        processTemplate(confDir, "Config.java", "javafx-java" + File.separator + "griffon-app" + File.separator + "conf" + File.separator + "Config.java.ftl", variables);
+
     }
 
 
