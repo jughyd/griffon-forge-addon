@@ -122,7 +122,7 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
         DirectoryResource confDir = griffonAppDir.getOrCreateChildDirectory("conf");
         DirectoryResource controllersDir = griffonAppDir.getOrCreateChildDirectory("controllers");
         DirectoryResource i18nDir = griffonAppDir.getOrCreateChildDirectory("i18n");
-        DirectoryResource lifeStyleDir = griffonAppDir.getOrCreateChildDirectory("lifestyle");
+        DirectoryResource lifeCycleDir = griffonAppDir.getOrCreateChildDirectory("lifecycle");
         DirectoryResource modelsDir = griffonAppDir.getOrCreateChildDirectory("models");
         DirectoryResource resourcesDir = griffonAppDir.getOrCreateChildDirectory("resources");
         DirectoryResource servicesDir = griffonAppDir.getOrCreateChildDirectory("services");
@@ -155,9 +155,9 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
                 "messages.properties",
                 "griffon-app/i18n/messages.properties");
 
-        copyFileFromTemplates(lifeStyleDir,
+        copyFileFromTemplates(lifeCycleDir,
                 "Initialize.java",
-                "javafx-java/griffon-app/lifestyle/Initialize.java");
+                "javafx-java/griffon-app/lifecycle/Initialize.java");
 
         dir = modelsDir;
         for(String level: topLevelPackage.split("\\."))
@@ -170,6 +170,41 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
             dir = dir.getOrCreateChildDirectory(level);
 
         processTemplate(dir, simplename+"View.java", "javafx-java/griffon-app/views/View.java.ftl", variables);
+
+        dir = resourcesDir;
+        for(String level: topLevelPackage.split("\\."))
+            dir = dir.getOrCreateChildDirectory(level);
+
+        processTemplate(dir, simplename + ".fxml", "javafx-java/griffon-app/resources/fxml.flt", variables);
+
+        copyFileFromTemplates(resourcesDir,
+                "application.properties",
+                "griffon-app/resources/application.properties");
+
+        copyFileFromTemplates(resourcesDir,
+                "griffon.png",
+                "griffon-app/resources/griffon.png");
+        copyFileFromTemplates(resourcesDir,
+                "griffon-icon-16x16.png",
+                "griffon-app/resources/griffon-icon-16x16.png");
+        copyFileFromTemplates(resourcesDir,
+                "griffon-icon-24x24.png",
+                "griffon-app/resources/griffon-icon-24x24.png");
+        copyFileFromTemplates(resourcesDir,
+                "griffon-icon-32x32.png",
+                "griffon-app/resources/griffon-icon-32x32.png");
+        copyFileFromTemplates(resourcesDir,
+                "griffon-icon-48x48.png",
+                "griffon-app/resources/griffon-icon-48x48.png");
+        copyFileFromTemplates(resourcesDir,
+                "griffon-icon-64x64.png",
+                "griffon-app/resources/griffon-icon-64x64.png");
+        copyFileFromTemplates(resourcesDir,
+                "griffon-icon-128x128.png",
+                "griffon-app/resources/griffon-icon-128x128.png");
+        copyFileFromTemplates(resourcesDir,
+                "resources.properties",
+                "griffon-app/resources/resources.properties");
     }
 
 
