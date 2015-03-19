@@ -155,8 +155,21 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
                 "messages.properties",
                 "griffon-app/i18n/messages.properties");
 
+        copyFileFromTemplates(lifeStyleDir,
+                "Initialize.java",
+                "javafx-java/griffon-app/lifestyle/Initialize.java");
 
+        dir = modelsDir;
+        for(String level: topLevelPackage.split("\\."))
+            dir = dir.getOrCreateChildDirectory(level);
 
+        processTemplate(dir, simplename+"Model.java", "javafx-java/griffon-app/models/Model.java.ftl", variables);
+
+        dir = viewsDir;
+        for(String level: topLevelPackage.split("\\."))
+            dir = dir.getOrCreateChildDirectory(level);
+
+        processTemplate(dir, simplename+"View.java", "javafx-java/griffon-app/views/View.java.ftl", variables);
     }
 
 
