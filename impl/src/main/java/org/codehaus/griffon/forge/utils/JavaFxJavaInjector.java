@@ -122,7 +122,7 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
         DirectoryResource confDir = griffonAppDir.getOrCreateChildDirectory("conf");
         DirectoryResource controllersDir = griffonAppDir.getOrCreateChildDirectory("controllers");
         DirectoryResource i18nDir = griffonAppDir.getOrCreateChildDirectory("i18n");
-        DirectoryResource lifeStyleDir = griffonAppDir.getOrCreateChildDirectory("lifestyle");
+        DirectoryResource lifeCycleDir = griffonAppDir.getOrCreateChildDirectory("lifecycle");
         DirectoryResource modelsDir = griffonAppDir.getOrCreateChildDirectory("models");
         DirectoryResource resourcesDir = griffonAppDir.getOrCreateChildDirectory("resources");
         DirectoryResource servicesDir = griffonAppDir.getOrCreateChildDirectory("services");
@@ -155,9 +155,9 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
                 "messages.properties",
                 "griffon-app/i18n/messages.properties");
 
-        copyFileFromTemplates(lifeStyleDir,
+        copyFileFromTemplates(lifeCycleDir,
                 "Initialize.java",
-                "javafx-java/griffon-app/lifestyle/Initialize.java");
+                "javafx-java/griffon-app/lifecycle/Initialize.java");
 
         dir = modelsDir;
         for(String level: topLevelPackage.split("\\."))
