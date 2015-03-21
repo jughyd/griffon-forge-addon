@@ -42,5 +42,13 @@ public class JavaFxGroovyInjector extends LanguageFrameworkInjector {
         throw new RuntimeException("Not Implemented Yet");
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void createSrcFolder(DirectoryResource directoryResource) throws IOException {
+        throw new RuntimeException("Not Implemented Yet");
+    }
+
 
 }

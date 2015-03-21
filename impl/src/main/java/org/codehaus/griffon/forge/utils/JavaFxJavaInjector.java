@@ -24,6 +24,8 @@ import java.util.Map;
 public class JavaFxJavaInjector extends LanguageFrameworkInjector {
 
 
+    private String topLevelPackage;
+
     public JavaFxJavaInjector(Project project, ResourceFactory resourceFactory, TemplateFactory templateFactory) {
         super(project, resourceFactory, templateFactory);
     }
@@ -37,6 +39,112 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
         createConfigFolder(directoryResource);
         createGriffonAppFolder(directoryResource);
         createMavenFolder(directoryResource);
+        createSrcFolder(directoryResource);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void createSrcFolder(DirectoryResource rootDir) throws IOException {
+        DirectoryResource srcDir = rootDir.getOrCreateChildDirectory("src");
+        DirectoryResource javaDocDir = srcDir.getOrCreateChildDirectory("javadoc");
+        DirectoryResource mainDir = srcDir.getOrCreateChildDirectory("main");
+        DirectoryResource mediaDir = srcDir.getOrCreateChildDirectory("media");
+        DirectoryResource testDir = srcDir.getOrCreateChildDirectory("test");
+
+        DirectoryResource resourcesDir = javaDocDir.getOrCreateChildDirectory("resources");
+        DirectoryResource cssDir = resourcesDir.getOrCreateChildDirectory("css");
+        DirectoryResource imgDir = resourcesDir.getOrCreateChildDirectory("img");
+
+        copyFileFromTemplates(cssDir,
+                "stylesheet.css",
+                "javafx-java/src/javadoc/resources/css/stylesheet.css");
+
+        copyFileFromTemplates(imgDir,
+                "background.gif",
+                "javafx-java/src/javadoc/resources/img/background.gif");
+
+        copyFileFromTemplates(imgDir,
+                "griffon.ico",
+                "javafx-java/src/javadoc/resources/img/griffon.ico");
+
+        copyFileFromTemplates(imgDir,
+                "tab.gif",
+                "javafx-java/src/javadoc/resources/img/tab.gif");
+
+        copyFileFromTemplates(imgDir,
+                "titlebar.gif",
+                "javafx-java/src/javadoc/resources/img/titlebar.gif");
+
+        copyFileFromTemplates(imgDir,
+                "titlebar_end.gif",
+                "javafx-java/src/javadoc/resources/img/titlebar_end.gif");
+
+        DirectoryResource groovyDir = mainDir.getOrCreateChildDirectory("groovy");
+        DirectoryResource izpackDir = mainDir.getOrCreateChildDirectory("izpack");
+        DirectoryResource izpackResourcesDir = izpackDir.getOrCreateChildDirectory("resources");
+        DirectoryResource javaDir = mainDir.getOrCreateChildDirectory("java");
+        DirectoryResource mainResourcesDir = mainDir.getOrCreateChildDirectory("resources");
+
+        copyFileFromTemplates(izpackDir,
+                "install.xml",
+                "javafx-java/src/main/izpack/install.xml");
+
+        copyFileFromTemplates(izpackResourcesDir,
+                "asl2.html",
+                "javafx-java/src/main/izpack/resources/asl2.html");
+
+        copyFileFromTemplates(izpackResourcesDir,
+                "emptyShortcutSpec.xml",
+                "javafx-java/src/main/izpack/resources/emptyShortcutSpec.xml");
+
+        copyFileFromTemplates(izpackResourcesDir,
+                "griffon-logo.png",
+                "javafx-java/src/main/izpack/resources/griffon-logo.png");
+
+        copyFileFromTemplates(izpackResourcesDir,
+                "griffon-splash.png",
+                "javafx-java/src/main/izpack/resources/griffon-splash.png");
+
+        copyFileFromTemplates(izpackResourcesDir,
+                "pre-uninstall.bat",
+                "javafx-java/src/main/izpack/resources/pre-uninstall.bat");
+
+        copyFileFromTemplates(izpackResourcesDir,
+                "processSpec.xml",
+                "javafx-java/src/main/izpack/resources/processSpec.xml");
+
+        copyFileFromTemplates(izpackResourcesDir,
+                "README.html",
+                "javafx-java/src/main/izpack/resources/README.html");
+
+        copyFileFromTemplates(izpackResourcesDir,
+                "RegistrySpec.xml",
+                "javafx-java/src/main/izpack/resources/RegistrySpec.xml");
+
+        copyFileFromTemplates(izpackResourcesDir,
+                "target_unix.txt",
+                "javafx-java/src/main/izpack/resources/target_unix.txt");
+
+        copyFileFromTemplates(izpackResourcesDir,
+                "unixShortcutSpec.xml",
+                "javafx-java/src/main/izpack/resources/unixShortcutSpec.xml");
+
+        copyFileFromTemplates(izpackResourcesDir,
+                "winShortcutSpec.xml",
+                "javafx-java/src/main/izpack/resources/winShortcutSpec.xml");
+
+        Map<String, String> variables = new HashMap<String, String>();
+        variables.put("toppackage",topLevelPackage);
+        DirectoryResource dir = createTopLevelPackageStructure(javaDir,topLevelPackage);
+        processTemplate(dir, "ApplicationEventHandler.java", "javafx-java/src/main/java/ApplicationEventHandler.java", variables);
+        processTemplate(dir, "ApplicationModule.java", "javafx-java/src/main/java/ApplicationModule.java", variables);
+        processTemplate(dir, "Launcher.java", "javafx-java/src/main/java/Launcher.java", variables);
+
+        copyFileFromTemplates(mainResourcesDir,
+                "log4j.properties",
+                "javafx-java/src/main/resources/log4j.properties");
     }
 
     /**
@@ -138,16 +246,14 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
         variables.put("simplename",simplename);
 
         MetadataFacet metadataFacet = project.getFacet(MetadataFacet.class);
-        String topLevelPackage = metadataFacet.getProjectGroupName();
+        topLevelPackage = metadataFacet.getProjectGroupName();
         if(topLevelPackage == null || topLevelPackage.length() == 0) {
             topLevelPackage = "org.example";
         }
         variables.put("toppackage",topLevelPackage);
         processTemplate(confDir, "Config.java", "javafx-java/griffon-app/conf/Config.java.ftl", variables);
 
-        DirectoryResource dir = controllersDir;
-        for(String level: topLevelPackage.split("\\."))
-            dir = dir.getOrCreateChildDirectory(level);
+        DirectoryResource dir = createTopLevelPackageStructure(controllersDir, topLevelPackage);
 
         processTemplate(dir, simplename+"Controller.java", "javafx-java/griffon-app/controllers/Controller.java.ftl", variables);
 
@@ -159,21 +265,16 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
                 "Initialize.java",
                 "javafx-java/griffon-app/lifecycle/Initialize.java");
 
-        dir = modelsDir;
-        for(String level: topLevelPackage.split("\\."))
-            dir = dir.getOrCreateChildDirectory(level);
+        dir = createTopLevelPackageStructure(modelsDir, topLevelPackage);
 
         processTemplate(dir, simplename+"Model.java", "javafx-java/griffon-app/models/Model.java.ftl", variables);
 
-        dir = viewsDir;
-        for(String level: topLevelPackage.split("\\."))
-            dir = dir.getOrCreateChildDirectory(level);
+        dir = createTopLevelPackageStructure(viewsDir, topLevelPackage);
+
 
         processTemplate(dir, simplename+"View.java", "javafx-java/griffon-app/views/View.java.ftl", variables);
 
-        dir = resourcesDir;
-        for(String level: topLevelPackage.split("\\."))
-            dir = dir.getOrCreateChildDirectory(level);
+        dir = createTopLevelPackageStructure(resourcesDir, topLevelPackage);
 
         processTemplate(dir, simplename + ".fxml", "javafx-java/griffon-app/resources/fxml.flt", variables);
 
@@ -206,6 +307,8 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
                 "resources.properties",
                 "griffon-app/resources/resources.properties");
     }
+
+
 
 
 }
