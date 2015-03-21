@@ -89,6 +89,18 @@ public abstract class LanguageFrameworkInjector {
         Files.copy(sourceUrl.openStream(), Paths.get(targetResource.getFullyQualifiedName()));
     }
 
+    /**
+     * Creates folder structure in targetDir based on given top level package information and returns the last directory created
+     * @param targetDir
+     * @param topLevelPackage
+     * @return
+     */
+    protected static DirectoryResource createTopLevelPackageStructure(DirectoryResource targetDir, String topLevelPackage) {
+        DirectoryResource dir = targetDir;
+        for(String level: topLevelPackage.split("\\."))
+            dir = dir.getOrCreateChildDirectory(level);
+        return dir;
+    }
 
     /**
      * Utility method to contain all the files inside config folder
@@ -113,4 +125,12 @@ public abstract class LanguageFrameworkInjector {
      * @throws IOException
      */
     abstract void createGriffonAppFolder(DirectoryResource directoryResource) throws IOException;
+
+    /**
+     * Utility method to generate all the files inside src folder
+     *
+     * @param directoryResource
+     * @throws IOException
+     */
+    abstract void createSrcFolder(DirectoryResource directoryResource) throws IOException;
 }
