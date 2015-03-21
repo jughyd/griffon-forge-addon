@@ -25,6 +25,7 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
 
 
     private String topLevelPackage;
+    private String simplename;
 
     public JavaFxJavaInjector(Project project, ResourceFactory resourceFactory, TemplateFactory templateFactory) {
         super(project, resourceFactory, templateFactory);
@@ -145,6 +146,47 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
         copyFileFromTemplates(mainResourcesDir,
                 "log4j.properties",
                 "javafx-java/src/main/resources/log4j.properties");
+
+        copyFileFromTemplates(mediaDir,
+                "griffon.icns",
+                "src/media/griffon.icns");
+        copyFileFromTemplates(mediaDir,
+                "griffon.ico",
+                "src/media/griffon.ico");
+        copyFileFromTemplates(mediaDir,
+                "griffon.png",
+                "src/media/griffon.png");
+        copyFileFromTemplates(mediaDir,
+                "griffon-icon-16x16.png",
+                "src/media/griffon-icon-16x16.png");
+        copyFileFromTemplates(mediaDir,
+                "griffon-icon-24x24.png",
+                "src/media/griffon-icon-24x24.png");
+        copyFileFromTemplates(mediaDir,
+                "griffon-icon-32x32.png",
+                "src/media/griffon-icon-32x32.png");
+        copyFileFromTemplates(mediaDir,
+                "griffon-icon-48x48.png",
+                "src/media/griffon-icon-48x48.png");
+        copyFileFromTemplates(mediaDir,
+                "griffon-icon-64x64.png",
+                "src/media/griffon-icon-64x64.png");
+        copyFileFromTemplates(mediaDir,
+                "griffon-icon-128x128.png",
+                "src/media/griffon-icon-128x128.png");
+        copyFileFromTemplates(mediaDir,
+                "griffon-icon-256x256.png",
+                "src/media/griffon-icon-256x256.png");
+
+        DirectoryResource testsGroovyDir = testDir.getOrCreateChildDirectory("groovy");
+        DirectoryResource testsJavaDir = testDir.getOrCreateChildDirectory("java");
+        DirectoryResource testsResourcesDir = testDir.getOrCreateChildDirectory("resources");
+        dir = createTopLevelPackageStructure(testsJavaDir,topLevelPackage);
+
+        variables.put("simplename",simplename);
+        processTemplate(dir, simplename+"ControllerTest.java", "javafx-java/src/tests/ControllerTest.java.flt", variables);
+
+
     }
 
     /**
@@ -240,7 +282,7 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
         variables.put("projectname",project.getRoot().getName());
 
         // TODO this can be even improved by changing the letter after - or _ to capital Case
-        String simplename = project.getRoot().getName().replaceAll("[^A-Za-z0-9]","");
+        simplename = project.getRoot().getName().replaceAll("[^A-Za-z0-9]","");
         char first = Character.toUpperCase(simplename.charAt(0));
         simplename = first + simplename.substring(1);
         variables.put("simplename",simplename);
