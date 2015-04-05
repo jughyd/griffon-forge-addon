@@ -1,5 +1,7 @@
 package org.codehaus.griffon.forge.facets;
 
+import org.apache.maven.model.Parent;
+import org.apache.maven.model.Repository;
 import org.codehaus.griffon.GriffonConstants;
 import org.codehaus.griffon.forge.GriffonFacet;
 import org.codehaus.griffon.forge.utils.JavaFxGroovyInjector;
@@ -17,10 +19,12 @@ import org.jboss.forge.addon.dependencies.util.NonSnapshotDependencyFilter;
 import org.jboss.forge.addon.facets.AbstractFacet;
 import org.jboss.forge.addon.maven.plugins.ExecutionBuilder;
 import org.jboss.forge.addon.maven.plugins.MavenPluginBuilder;
+import org.jboss.forge.addon.maven.projects.MavenFacet;
 import org.jboss.forge.addon.maven.projects.MavenPluginFacet;
 import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
+import org.jboss.forge.addon.projects.facets.DependencyFacet;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.templates.TemplateFactory;
 
@@ -92,11 +96,22 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
         addDependency(SLF4J_LOG4J12);
         addDependency(SPOCK_CORE);
         addDependency(JUNIT);
+
+        DependencyFacet  facet = getFaceted().getFacet(DependencyFacet.class);
+        facet.addRepository("jcenter","http://jcenter.bintray.com");
+
+        // The below code is supposed to add a parent pom, but is not doing it
+//        Parent p = new Parent();
+//        p.setGroupId("org.codehaus.griffon");
+//        p.setArtifactId("application-master-pom");
+//        p.setVersion("1.1.0");
+//        MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
+//        mavenFacet.getModel().setParent(p);
+//
     }
 
     protected void addPlugins() {
         addPlugin(JAVAFX_MAVEN_PLUGIN);
-        addPlugin(MAVEN_ANTRUN_PLUGIN);
     }
 
     protected void addPlugin(String baseCoordinate) {
