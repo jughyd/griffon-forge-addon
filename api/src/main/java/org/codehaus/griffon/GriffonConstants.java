@@ -11,6 +11,9 @@ public interface GriffonConstants {
 
     final DependencyRepository dependencyRepository = new DependencyRepository("jcenter", "http://jcenter.bintray.com/");
 
+    final String GRIFFON_GROUP_ID = "org.codehaus.griffon";
+    final String GRIFFON_MASTERPOM_ARTIFACT_ID = "application-master-pom";
+
     final String GRIFFON_JAVAFX = "org.codehaus.griffon:griffon-javafx";
     final String GRIFFON_GUICE = "org.codehaus.griffon:griffon-guice";
     final String GRIFFON_CORE_TEST = "org.codehaus.griffon:griffon-core-test";

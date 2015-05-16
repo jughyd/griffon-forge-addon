@@ -26,6 +26,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.templates.TemplateFactory;
 
@@ -92,11 +93,9 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
     }
 
     protected void addDependencies() {
-
-
         Parent p = new Parent();
-        p.setGroupId("org.codehaus.griffon");
-        p.setArtifactId("application-master-pom");
+        p.setGroupId(GRIFFON_GROUP_ID);
+        p.setArtifactId(GRIFFON_MASTERPOM_ARTIFACT_ID);
         p.setVersion("1.0.0");
         MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
         Model model = mavenFacet.getModel();
@@ -105,6 +104,13 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
 
         DependencyFacet  facet = getFaceted().getFacet(DependencyFacet.class);
         facet.addRepository("jcenter","http://jcenter.bintray.com");
+        facet.addRepository("griffon-plugins","http://dl.bintray.com/griffon/griffon-plugins");
+
+        MetadataFacet mdfacet = getFaceted().getFacet(MetadataFacet.class);
+        mdfacet.setDirectProperty("griffon.version","2.2.0");
+        mdfacet.setDirectProperty("application.main.class",mdfacet.getProjectGroupName()+".Launcher");
+        mdfacet.setDirectProperty("maven.compiler.source","1.8");
+        mdfacet.setDirectProperty("maven.compiler.target","1.8");
 
         builder = DependencyBuilder.create();
         addDependency(LOG4J);
