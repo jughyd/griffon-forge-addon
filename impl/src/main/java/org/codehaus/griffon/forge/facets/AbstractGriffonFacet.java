@@ -1,5 +1,6 @@
 package org.codehaus.griffon.forge.facets;
 
+import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.Repository;
 import org.codehaus.griffon.GriffonConstants;
@@ -25,6 +26,7 @@ import org.jboss.forge.addon.projects.Project;
 import org.jboss.forge.addon.projects.ProjectFacet;
 import org.jboss.forge.addon.projects.dependencies.DependencyInstaller;
 import org.jboss.forge.addon.projects.facets.DependencyFacet;
+import org.jboss.forge.addon.projects.facets.MetadataFacet;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.addon.templates.TemplateFactory;
 
@@ -66,7 +68,7 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
 
     @Override
     public boolean isInstalled() {
-        return false;
+        return getFaceted().getRoot().getChild("griffon-app").exists();
     }
 
     @Override
@@ -91,23 +93,30 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
     }
 
     protected void addDependencies() {
+        Parent p = new Parent();
+        p.setGroupId(GRIFFON_GROUP_ID);
+        p.setArtifactId(GRIFFON_MASTERPOM_ARTIFACT_ID);
+        p.setVersion("1.0.0");
+        MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
+        Model model = mavenFacet.getModel();
+        model.setParent(p);
+        mavenFacet.setModel(model);
+
+        DependencyFacet  facet = getFaceted().getFacet(DependencyFacet.class);
+        facet.addRepository("jcenter","http://jcenter.bintray.com");
+        facet.addRepository("griffon-plugins","http://dl.bintray.com/griffon/griffon-plugins");
+
+        MetadataFacet mdfacet = getFaceted().getFacet(MetadataFacet.class);
+        mdfacet.setDirectProperty("griffon.version","2.2.0");
+        mdfacet.setDirectProperty("application.main.class",mdfacet.getProjectGroupName()+".Launcher");
+        mdfacet.setDirectProperty("maven.compiler.source","1.8");
+        mdfacet.setDirectProperty("maven.compiler.target","1.8");
+
         builder = DependencyBuilder.create();
         addDependency(LOG4J);
         addDependency(SLF4J_LOG4J12);
         addDependency(SPOCK_CORE);
         addDependency(JUNIT);
-
-        DependencyFacet  facet = getFaceted().getFacet(DependencyFacet.class);
-        facet.addRepository("jcenter","http://jcenter.bintray.com");
-
-        // The below code is supposed to add a parent pom, but is not doing it
-//        Parent p = new Parent();
-//        p.setGroupId("org.codehaus.griffon");
-//        p.setArtifactId("application-master-pom");
-//        p.setVersion("1.1.0");
-//        MavenFacet mavenFacet = getFaceted().getFacet(MavenFacet.class);
-//        mavenFacet.getModel().setParent(p);
-//
     }
 
     protected void addPlugins() {

@@ -1,5 +1,3 @@
-package templates.javafx
-
 import griffon.core.GriffonApplication;
 import org.codehaus.griffon.runtime.core.AbstractLifecycleHandler;
 

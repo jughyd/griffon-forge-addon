@@ -16,7 +16,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
-    <version.furnace>2.12.0.Final</version.furnace>
+    <version.furnace>2.16.0.Final</version.furnace>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -29,7 +29,7 @@
       <dependency>
         <groupId>org.jboss.forge.furnace.container</groupId>
         <artifactId>cdi</artifactId>
-        <version>2.10.1.Final</version>
+        <version>${version.furnace}</version>
         <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
@@ -76,49 +76,49 @@
       <dependency>
         <groupId>org.jboss.forge.addon</groupId>
         <artifactId>core</artifactId>
-        <version>2.10.1.Final</version>
+        <version>${version.furnace}</version>
         <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss.forge.addon</groupId>
         <artifactId>maven</artifactId>
-        <version>2.10.1.Final</version>
+        <version>${version.furnace}</version>
         <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss.forge.addon</groupId>
         <artifactId>parser-java</artifactId>
-        <version>2.10.1.Final</version>
+        <version>${version.furnace}</version>
         <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss.forge.addon</groupId>
         <artifactId>parser-xml</artifactId>
-        <version>2.10.1.Final</version>
+        <version>${version.furnace}</version>
         <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss.forge.addon</groupId>
         <artifactId>projects</artifactId>
-        <version>2.10.1.Final</version>
+        <version>${version.furnace}</version>
         <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss.forge.addon</groupId>
         <artifactId>templates</artifactId>
-        <version>2.10.1.Final</version>
+        <version>${version.furnace}</version>
         <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss.forge.addon</groupId>
         <artifactId>text</artifactId>
-        <version>2.10.1.Final</version>
+        <version>${version.furnace}</version>
         <classifier>forge-addon</classifier>
       </dependency>
       <dependency>
         <groupId>org.jboss.forge.addon</groupId>
         <artifactId>ui</artifactId>
-        <version>2.10.1.Final</version>
+        <version>${version.furnace}</version>
         <classifier>forge-addon</classifier>
       </dependency>
     </dependencies>

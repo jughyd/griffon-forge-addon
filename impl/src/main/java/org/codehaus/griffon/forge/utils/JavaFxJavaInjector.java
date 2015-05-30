@@ -82,7 +82,6 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
                 "titlebar_end.gif",
                 "javafx-java/src/javadoc/resources/img/titlebar_end.gif");
 
-        DirectoryResource groovyDir = mainDir.getOrCreateChildDirectory("groovy");
         DirectoryResource izpackDir = mainDir.getOrCreateChildDirectory("izpack");
         DirectoryResource izpackResourcesDir = izpackDir.getOrCreateChildDirectory("resources");
         DirectoryResource javaDir = mainDir.getOrCreateChildDirectory("java");
@@ -178,7 +177,6 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
                 "griffon-icon-256x256.png",
                 "src/media/griffon-icon-256x256.png");
 
-        DirectoryResource testsGroovyDir = testDir.getOrCreateChildDirectory("groovy");
         DirectoryResource testsJavaDir = testDir.getOrCreateChildDirectory("java");
         DirectoryResource testsResourcesDir = testDir.getOrCreateChildDirectory("resources");
         dir = createTopLevelPackageStructure(testsJavaDir,topLevelPackage);
@@ -283,6 +281,7 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
 
         // TODO this can be even improved by changing the letter after - or _ to capital Case
         simplename = project.getRoot().getName().replaceAll("[^A-Za-z0-9]","");
+        String simplenamebeginningWithLowercase = simplename;
         char first = Character.toUpperCase(simplename.charAt(0));
         simplename = first + simplename.substring(1);
         variables.put("simplename",simplename);
@@ -299,13 +298,11 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
 
         processTemplate(dir, simplename+"Controller.java", "javafx-java/griffon-app/controllers/Controller.java.ftl", variables);
 
+        processTemplate(lifeCycleDir,"Initialize.java", "javafx-java/griffon-app/lifecycle/Initialize.java", variables);
+
         copyFileFromTemplates(i18nDir,
                 "messages.properties",
                 "griffon-app/i18n/messages.properties");
-
-        copyFileFromTemplates(lifeCycleDir,
-                "Initialize.java",
-                "javafx-java/griffon-app/lifecycle/Initialize.java");
 
         dir = createTopLevelPackageStructure(modelsDir, topLevelPackage);
 
@@ -313,12 +310,11 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
 
         dir = createTopLevelPackageStructure(viewsDir, topLevelPackage);
 
-
         processTemplate(dir, simplename+"View.java", "javafx-java/griffon-app/views/View.java.ftl", variables);
 
         dir = createTopLevelPackageStructure(resourcesDir, topLevelPackage);
 
-        processTemplate(dir, simplename + ".fxml", "javafx-java/griffon-app/resources/fxml.flt", variables);
+        processTemplate(dir, simplenamebeginningWithLowercase + ".fxml", "javafx-java/griffon-app/resources/fxml.flt", variables);
 
         copyFileFromTemplates(resourcesDir,
                 "application.properties",
@@ -345,6 +341,9 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
         copyFileFromTemplates(resourcesDir,
                 "griffon-icon-128x128.png",
                 "griffon-app/resources/griffon-icon-128x128.png");
+        copyFileFromTemplates(resourcesDir,
+                "griffon-icon-256x256.png",
+                "griffon-app/resources/griffon-icon-256x256.png");
         copyFileFromTemplates(resourcesDir,
                 "resources.properties",
                 "griffon-app/resources/resources.properties");

@@ -1,5 +1,3 @@
-package templates.config.codenarc
-
 ruleset {
     ruleset('rulesets/basic.xml') {
         exclude 'EmptyCatchBlock'
