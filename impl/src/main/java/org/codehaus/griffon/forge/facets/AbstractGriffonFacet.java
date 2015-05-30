@@ -68,7 +68,7 @@ public abstract class AbstractGriffonFacet extends AbstractFacet<Project>
 
     @Override
     public boolean isInstalled() {
-        return false;
+        return getFaceted().getRoot().getChild("griffon-app").exists();
     }
 
     @Override
