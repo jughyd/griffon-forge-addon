@@ -281,6 +281,7 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
 
         // TODO this can be even improved by changing the letter after - or _ to capital Case
         simplename = project.getRoot().getName().replaceAll("[^A-Za-z0-9]","");
+        String simplenamebeginningWithLowercase = simplename;
         char first = Character.toUpperCase(simplename.charAt(0));
         simplename = first + simplename.substring(1);
         variables.put("simplename",simplename);
@@ -309,12 +310,11 @@ public class JavaFxJavaInjector extends LanguageFrameworkInjector {
 
         dir = createTopLevelPackageStructure(viewsDir, topLevelPackage);
 
-
         processTemplate(dir, simplename+"View.java", "javafx-java/griffon-app/views/View.java.ftl", variables);
 
         dir = createTopLevelPackageStructure(resourcesDir, topLevelPackage);
 
-        processTemplate(dir, simplename + ".fxml", "javafx-java/griffon-app/resources/fxml.flt", variables);
+        processTemplate(dir, simplenamebeginningWithLowercase + ".fxml", "javafx-java/griffon-app/resources/fxml.flt", variables);
 
         copyFileFromTemplates(resourcesDir,
                 "application.properties",
